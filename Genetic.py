@@ -1,5 +1,6 @@
 from Character import Character
 import random
+import copy
 
 class Genetic:
 
@@ -107,8 +108,29 @@ class Genetic:
         self.setCharacteres(selectedPopu)
         print(len(selectedPopu))
 
-    def crossover(self):
-        print("k")
+    #Crossover
+    #Metodo de un solo puntu
+    def crossover(self, reproduc):
+        parents = copy.deepcopy(self.characteres)
+        random.shuffle(parents)
+        for i in range(reproduc):
+            parent1 = parents[random.randint(0, len(parents))].getDNA()
+            parent2 = parents[random.randint(0, len(parents))]
+            son1 = Character(len(self.characteres) + 1)
+            son2 = Character(len(self.characteres) + 1)
+            point = random.randint(0, 2)
+            if point == 1:
+                son1.setDNA([parent1[0], parent2[1], parent2[2], parent2[3]])
+                son2.setDNA([parent2[0], parent2[1], parent1[2], parent2[3]])
+                self.characteres.append(son1, son2)
+            if point == 2:
+                son1.setDNA([parent1[0], parent1[1], parent2[2], parent2[3]])
+                son2.setDNA([parent2[0], parent2[1], parent1[2], parent1[3]])
+                self.characteres.append(son1, son2)
+            else:
+                son1.setDNA(parent1.getDNA())
+                son2.setDNA(parent2.getDNA())
+                self.characteres.append(son1, son2)
 
 
     def mutation(self):
