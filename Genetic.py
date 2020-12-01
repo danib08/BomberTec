@@ -132,9 +132,25 @@ class Genetic:
                 son2.setDNA(parent2.getDNA())
                 self.characteres.append(son1, son2)
 
+    #Mutation
+    def mutation(self, probMuta):
+        for character in self.characteres:
+            defMut = random.randint(0, 100)
+            if defMut <= probMuta:
+                incre = random.randint(0, 3)
+                decre = random.randint(0, 3)
+                if incre == decre:
+                    while decre == incre:
+                        incre = random.randint(0, 3)
+                        decre = random.randint(0, 3)
+                    cant = random.randint(0, character.DNA[decre])
+                    character.DNA[decre] -= cant
+                    character.DNA[incre] += cant
+                else:
+                    cant = random.randint(0, character.DNA[decre])
+                    character.DNA[decre] -= cant
+                    character.DNA[incre] += cant
 
-    def mutation(self):
-        print("Mutacion")
 
 
 
