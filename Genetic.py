@@ -4,22 +4,26 @@ import random
 class Genetic:
 
     def __init__(self, characteres, nPopulation):
-        self.characteres = characteres
-        self.nPopulation = nPopulation
+        self.characteres = characteres #lista de individuos
+        self.nPopulation = nPopulation #Cantidad de idividuos que quiero
 
+    #Obtiene la lista de individuos
     def getCharacteres(self):
         return self.characteres
 
+    #Setea la lista de individuos
     def setCharacteres(self):
         return self.characteres
 
+    #Verifica que la suma de las probabilidades sea 100
     def sumList(self, listElements):
         for j in range(len(listElements)):
             aux = sum(listElements)
             if aux != 100:
                 n = 100 - aux
-                listElements[3] = listElements[3] + n
+                listElements[random.randint(0, 3)] += n
 
+    #Genera la poblaciion inicial
     def generateFP(self):
         i = 0
         for i in range(self.nPopulation):
@@ -37,6 +41,9 @@ class Genetic:
 
 
     #Función Fitness
+
+    #Calcula primer parametro para el fitness
+    #Bombas mas cercanas a los idividuos
     def f1(self, bombsR):
         value = 0
         if len(bombsR) == 0:
@@ -48,6 +55,9 @@ class Genetic:
             print(f)
             return f
 
+    #Calcula segundo y tercer parametro para el fitness
+    #Bombas detonodas en enemigos
+    #Bombas detonadas en bloques
     def f2(self, enemiesR):
         value = 0
         if len(enemiesR) == 0:
@@ -59,6 +69,7 @@ class Genetic:
             print(f)
             return f
 
+    #Suma de todos los parametros para el fitness
     def fitness(self):
         i = 0
         for i in range (len(self.characteres)):
@@ -67,7 +78,9 @@ class Genetic:
                   + self.f2(self.characteres[i].blockRecord)
             self.characteres[i].setFitness(fit)
 
-    #Selección
+    #Seleccion
+
+    #Suma de todos los fitness
     def totalFit(self, listPopu):
         globalFitness = 0
         i = 0
@@ -75,6 +88,8 @@ class Genetic:
             globalFitness += listPopu[i].fitness
         return globalFitness
 
+    #Selección de individuos para el crossover
+    #Se utiliza el metodo de la ruleta
     def selection(self, selecSize):
         popu = self.characteres.copy();
         selectedPopu = []
@@ -83,22 +98,18 @@ class Genetic:
             aux = random.randint(0, self.totalFit(popu))
             random.shuffle(popu)
             sumDec = 0
-            cont = 0
             for character in popu:
                 sumDec += character.getFitness()
-                if sumDec == aux :
+                if sumDec >= aux :
                     selectedPopu.append(character)
                     popu.remove(character)
                     break;
-                cont += 1
-        return selectedPopu
+        self.setCharacteres(selectedPopu)
+        print(len(selectedPopu))
 
+    def crossover(self):
+        print("k")
 
-    def reproduction(self):
-        print("Reproduction")
-
-    def crossOver(self):
-        print("crossover")
 
     def mutation(self):
         print("Mutacion")
