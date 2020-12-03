@@ -12,7 +12,7 @@ class Main:
     displayHeight = 720
     window = pygame.display.set_mode((displayWeight, displayHeight))
     pygame.display.set_caption("BomberTec")
-    window.fill((45, 118, 98))
+    window.fill((0, 0, 0))
 
     clock = pygame.time.Clock()
     gameMap = GameMap()
