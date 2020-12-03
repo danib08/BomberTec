@@ -1,4 +1,4 @@
-from Character import Character
+from GeneticAlgorithm.Character import Character
 import random
 import copy
 
