@@ -49,7 +49,7 @@ class GameMap:
             y += 40
 
         return walls
-    
+
     ## Draws a wall on-screen
     #  @param self The object pointer
     #  @param new_map
@@ -92,7 +92,7 @@ class GameMap:
     def test(self, surface):
         start = (1, 1)
         end = (7, 14)
-        path = AStarAlgorithm.astar(self.mapMatrix, start, end)
+        path = AStarAlgorithm.AStar.astar(self.mapMatrix, start, end)
         print(path)
         walls = self.buildMap(self.mapMatrix)
         self.drawMap(surface, walls, 1)
