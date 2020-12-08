@@ -1,7 +1,7 @@
 from random import randint
 
 
-class GameMap:
+class CreateMap:
     """ ! Creates the game map.
     Includes the non-destroyable blocks within the map ensuring that players can access other players within the map.
     """
@@ -131,7 +131,7 @@ class GameMap:
         :return: The game map created in a matrix.
         """
         size_rows = 18
-        size_columns = 42
+        size_columns = 32
         size = 40
         for i in range(size_rows):
             temp = []
@@ -140,12 +140,12 @@ class GameMap:
             self.grid.append(temp)
 
         # Set the required players on the map
-        self.setPlayer(2, 3, self.grid)
-        self.setPlayer(10, 23, self.grid)
-        self.setPlayer(7, 14, self.grid)
-        self.setPlayer(16, 6, self.grid)
-        self.setNonDestructibleItems(self.grid, round((30 ** 2) / 2))
-        self.print_grid()
+        self.setPlayer(0, 0, self.grid)
+        self.setPlayer(17, 0, self.grid)
+        self.setPlayer(0, 31, self.grid)
+        self.setPlayer(17, 31, self.grid)
+        self.setNonDestructibleItems(self.grid, round((20 ** 2) / 2))
+        #self.print_grid()
         return self.grid
 
     def print_grid(self):
@@ -159,6 +159,4 @@ class GameMap:
             print(temp)
 
 
-if __name__ == '__main__':
-    my_map = GameMap()
-    my_map.create_grid()
+
