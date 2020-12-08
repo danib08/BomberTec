@@ -1,12 +1,11 @@
 from random import randint
 
 
-
-
 class GameMap:
     """ ! Creates the game map.
     Includes the non-destroyable blocks within the map ensuring that players can access other players within the map.
     """
+
     def __init__(self):
         """
         Constructor of the class.
@@ -139,6 +138,8 @@ class GameMap:
             for j in range(size_columns):
                 temp.append("0")
             self.grid.append(temp)
+
+        # Set the required players on the map
         self.setPlayer(2, 3, self.grid)
         self.setPlayer(10, 23, self.grid)
         self.setPlayer(7, 14, self.grid)
