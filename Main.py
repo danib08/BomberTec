@@ -1,8 +1,9 @@
 # Main File
+
 import pygame as pg
 import sys
 from pygame.locals import QUIT
-from Game.Menu import *
+from Game.Menu import Menu
 from Map.GameMap import GameMap
 
 pg.init()
@@ -17,21 +18,25 @@ clock = pg.time.Clock()
 running = True
 menuFlag = True
 gameFlag = False
+firstBuild = False
 
 ## Loop that controls the game
 while running:
-    #clock.tick(60)
+    # Instances of the screens are created
     menu = Menu(window)
     gameMap = GameMap()
 
-    if menuFlag:
+    if menuFlag:   # Draws everything on the menu screen
         menu.draw()
         if menu.clicked:
             menuFlag = False
             gameFlag = True
 
     elif gameFlag:
-        window.fill((0,0,0))
+        if not firstBuild:  # Initializes the map and draws it
+            window.fill((0,153,77))
+            gameMap.test(window)
+            firstBuild = True
 
     for event in pg.event.get():
         if event.type == pg.locals.QUIT:

@@ -1,15 +1,21 @@
-import pygame as pg
 from Game.Interface import *
 
-pg.init()
 
 class Menu:
     def __init__(self, surface):
+        """
+        Funcion perrona
+        :param surface: superficie cool
+        """
         self.surface = surface
         self.clicked = False
 
 
     def draw(self):
+        """
+        Draw perron
+        :return: 1 si clickeo
+        """
         title = Text(self.surface, "BomberTEC", 630, 250, (68, 0, 204), 100)
         title.drawText()
 
