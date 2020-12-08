@@ -7,27 +7,35 @@ from Map.GameMap import GameMap
 
 pg.init()
 
-## Main class that initializes the game
-
 displayWidth = 1280
 displayHeight = 720
 window = pg.display.set_mode((displayWidth, displayHeight))
 pg.display.set_caption("BomberTec")
-window.fill((255,77,196))
+window.fill((187,153,255))
 
 clock = pg.time.Clock()
 running = True
-
-#gameMap = GameMap()
-#gameMap.test(window)
+menuFlag = True
+gameFlag = False
 
 ## Loop that controls the game
 while running:
-    clock.tick(60)
-    menu = Menu(displayWidth, displayHeight, window)
+    #clock.tick(60)
+    menu = Menu(window)
+    gameMap = GameMap()
+
+    if menuFlag:
+        menu.draw()
+        if menu.clicked:
+            menuFlag = False
+            gameFlag = True
+
+    elif gameFlag:
+        window.fill((0,0,0))
 
     for event in pg.event.get():
         if event.type == pg.locals.QUIT:
+            running = False
             pg.quit()
             sys.exit()
 
