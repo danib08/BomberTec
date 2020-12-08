@@ -15,6 +15,8 @@ pg.display.set_caption("BomberTec")
 window.fill((187,153,255))
 
 clock = pg.time.Clock()
+
+# Flags
 running = True
 menuFlag = True
 gameFlag = False

@@ -1,20 +1,22 @@
 from Game.Interface import *
 
-
 class Menu:
+    """
+    Represents the menu screen
+    """
     def __init__(self, surface):
         """
-        Funcion perrona
-        :param surface: superficie cool
+        Constructor of the Menu class
+        :param surface: The pygame surface where objects will be drawn
         """
         self.surface = surface
-        self.clicked = False
+        self.clicked = False  # Boolean that states if the button on the menu screen was clicked or not
 
 
     def draw(self):
         """
-        Draw perron
-        :return: 1 si clickeo
+        Draws text and a button on the screen
+        :return: null
         """
         title = Text(self.surface, "BomberTEC", 630, 250, (68, 0, 204), 100)
         title.drawText()
