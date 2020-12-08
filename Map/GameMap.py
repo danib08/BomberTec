@@ -3,7 +3,6 @@ from Map import AStarAlgorithm
 
 pygame.init()
 
-
 ## This class represents the game map
 class GameMap:
     mapMatrix = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
