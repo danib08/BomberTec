@@ -17,6 +17,7 @@ clock = pg.time.Clock()
 running = True
 menuFlag = True
 gameFlag = False
+firstBuild = False
 
 ## Loop that controls the game
 while running:
@@ -31,7 +32,10 @@ while running:
             gameFlag = True
 
     elif gameFlag:
-        window.fill((0,0,0))
+        if not firstBuild:
+            window.fill((0,153,77))
+            gameMap.test(window)
+            firstBuild = True
 
     for event in pg.event.get():
         if event.type == pg.locals.QUIT:
