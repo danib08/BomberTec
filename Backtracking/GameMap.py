@@ -4,6 +4,7 @@ class GameMap:
     def __init__(self):
         self.players = 0
         self.players_list = []
+        self.grid= []
 
     def getPlayerPosition(self, player):
         return self.players_list[player]
@@ -51,7 +52,7 @@ class GameMap:
         stack = [current]
         while stack:
             s = stack.pop()
-            if s == self.getPlayer(destiny):
+            if s == self.getPlayerPosition(destiny):
                 return True
             if matrix[s[0]][s[1]] == destiny:
                 return True
@@ -62,50 +63,49 @@ class GameMap:
         return False
 
     def checkPaths(self, matrix):
-        for i in range(players):
-            for j in range(players):
+        for i in range(self.players):
+            for j in range(self.players):
                 if i == j:
                     continue
-                if not self.DFS(self.getPlayer(i), j, matrix, []):
+                if not self.DFS(self.getPlayerPosition(i), j, matrix, []):
                     print(False)
                     return False
         return True
 
     def setPlayer(self, i, j, matrix):
-        global players
-        global players_list
-        players_list.append([i, j])
+        self.players_list.append([i, j])
         if matrix[i][j] == "0":
-            matrix[i][j] = "P" + players.__str__()
+            matrix[i][j] = "P" + self.players.__str__()
             # matrix[i][j] = players
-            players += 1
+            self.players += 1
 
     def create_grid(self):
-        grid = []
+        #grid = []
         size_rows = 18
         size_columns = 42
         size = 40
+        print("jjsbfd")
         for i in range(size_rows):
             temp = []
             for j in range(size_columns):
                 temp.append("0")
-            grid.append(temp)
-        self.setPlayer(2, 3, grid)
-        self.setPlayer(10, 23, grid)
-        self.setPlayer(7, 14, grid)
-        self.setPlayer(16, 6, grid)
-        self.setNonDestructibleItems(grid, round((30 ** 2) / 2))
-        return grid
+            self.grid.append(temp)
+        self.setPlayer(2, 3, self.grid)
+        self.setPlayer(10, 23, self.grid)
+        self.setPlayer(7, 14, self.grid)
+        self.setPlayer(16, 6, self.grid)
+        self.setNonDestructibleItems(self.grid, round((30 ** 2) / 2))
+        self.print_grid()
+        return self.grid
 
-    def print_grid(self, grid):
-        for i in grid:
+    def print_grid(self):
+        for i in self.grid:
             temp = ""
             for j in i:
                 temp += str(j) + "  "
             print(temp)
 
-def main():
-    map= GameMap()
+
+if __name__ == '__main__':
+    map = GameMap()
     map.create_grid()
-    grid = map.create_grid()
-    map.print_grid(grid)
