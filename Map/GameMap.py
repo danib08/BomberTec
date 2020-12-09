@@ -76,6 +76,19 @@ class GameMap:
                 flag = bool(random.getrandbits(1))
                 if flag == 1 and map[i][j] == "0":
                     map[i][j] = "2"
+        map[0][30] = "0"
+        map[1][30] = "0"
+        map[1][31] = "0"
+        map[0][1] = "0"
+        map[1][1] = "0"
+        map[1][0] = "0"
+        map[17][30] = "0"
+        map[16][30] = "0"
+        map[16][31] = "0"
+        map[17][0] = "0"
+        map[17][1] = "0"
+        map[16][1] = "0"
+
         return map
 
     ## Temporary method that generates a map
