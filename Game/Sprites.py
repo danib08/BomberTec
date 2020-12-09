@@ -58,6 +58,7 @@ class Player(pg.sprite.Sprite):
 
     def placeBomb(self):
         self.bomb.setCoord(self.rect.centerx, self.rect.centery)
+        self.bomb.resetTime()
         self.placedBomb = True
 
 class Bomb(pg.sprite.Sprite):
@@ -77,6 +78,7 @@ class Bomb(pg.sprite.Sprite):
         self.image = pg.Surface((40, 40))
         self.image.fill((255, 25, 25))
         self.rect = self.image.get_rect()
+        self.time = 3000
 
     def setCoord(self, playerCenterX, playerCenterY):
         wallWidth = 40
@@ -98,11 +100,19 @@ class Bomb(pg.sprite.Sprite):
             bombX = x1
         if not foundY:
             y1 = 0
-            while not y1 < playerCenterX < y1 + wallWidth:
+            while not y1 < playerCenterY < y1 + wallWidth:
                 y1 += wallWidth
             bombY = y1
 
         self.rect.topleft = (bombX, bombY)
 
+    def update(self):
+        self.time -= 15
+
+    def resetTime(self):
+        self.time = 3000
+
     def draw(self, screen):
         screen.blit(self.image, self.rect)
+        print(self.rect.topleft)
+

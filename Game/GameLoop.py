@@ -1,6 +1,6 @@
 import pygame as pg
 from Map.GameMap import GameMap
-from Game.Player import Player
+from Game.Sprites import Player
 
 class GameLoop:
     def __init__(self, screen, displayWidth, displayHeight):
@@ -30,10 +30,16 @@ class GameLoop:
         # ---------------------------------------
 
         self.gameMap.drawMap(self.screen)
+
         keys = pg.key.get_pressed()
         self.player.update(keys, self.gameMap.walls, self.gameMap.fakeWalls)
         self.allPlayers.draw(self.screen)
 
         for player in self.allPlayers.sprites():
             if player.placedBomb:
-                player.bomb.draw(self.screen)
+                if player.bomb.time > 0:
+                    player.bomb.update()
+                    player.bomb.draw(self.screen)
+                if player.bomb.time == 0:
+                    player.placedBomb = False
+                    player.bomb.resetTime()
