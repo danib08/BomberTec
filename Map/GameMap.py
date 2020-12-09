@@ -1,35 +1,19 @@
+import random
+
 import pygame
 from Map import AStarAlgorithm
-
+from Backtracking import CreateMap
 pygame.init()
 
 ## This class represents the game map
 class GameMap:
-    mapMatrix = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                 [1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
-                 [1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1],
-                 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1],
-                 [1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1],
-                 [1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1],
-                 [1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1],
-                 [1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1],
-                 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1],
-                 [1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
-                 [1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
-                 [1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 2, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
-                 [1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
-                 [1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
-                 [1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
-                 [1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
-                 [1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
-                 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
     ## Draws a wall on-screen
     #  @param self The object pointer
     #  @param surface
     #  @param rectangle
     def drawWall(self, surface, rectangle):
-        pygame.draw.rect(surface, (255, 255, 255), rectangle)
+        pygame.draw.rect(surface, (32,32,32), rectangle)
 
     ## Draws a wall on-screen
     #  @param self The object pointer
@@ -40,7 +24,7 @@ class GameMap:
         y = 0
         for i in range(len(new_map)):
             for j in range(len(new_map[0])):
-                if new_map[i][j] == 1:
+                if new_map[i][j] == "1":
                     walls.append(pygame.Rect(x, y, 40, 40))
 
                 x += 40
@@ -58,7 +42,7 @@ class GameMap:
         y = 0
         for i in range(len(new_map)):
             for j in range(len(new_map[0])):
-                if new_map[i][j] == 2:
+                if new_map[i][j] == "2":
                     walls2.append(pygame.Rect(x, y, 40, 40))
 
                 x += 40
@@ -72,7 +56,7 @@ class GameMap:
     #  @param surface
     #  @param rectangle
     def drawFakeWalls(self, surface, rectangle):
-        pygame.draw.rect(surface, (255, 0, 0), rectangle)
+        pygame.draw.rect(surface, (104,104,104), rectangle)
 
     ## Draw the map on-screen
     #  @param self The object pointer
@@ -86,17 +70,27 @@ class GameMap:
             else:
                 self.drawFakeWalls(surface, wall)
 
+    def createFakeBlocks(self, map):
+        for i in range(0, 17):
+            for j in range(0, 31):
+                flag = bool(random.getrandbits(1))
+                if flag == 1 and map[i][j] == "0":
+                    map[i][j] = "2"
+        return map
+
     ## Temporary method that generates a map
     #  @param surface
     def test(self, surface):
-        start = (1, 1)
-        end = (7, 14)
-        path = AStarAlgorithm.AStar.astar(self.mapMatrix, start, end)
-        print(path)
-        walls = self.buildMap(self.mapMatrix)
+        # start = (1, 1)
+        # end = (7, 14)
+        # path = AStarAlgorithm.AStar.astar(self.mapMatrix, start, end)
+        # print(path)
+        my_map = CreateMap.CreateMap()
+        mapMatrix = my_map.create_grid()
+        mapMatrix = self.createFakeBlocks(mapMatrix)
+        walls = self.buildMap(mapMatrix)
         self.drawMap(surface, walls, 1)
-        walls2 = self.buildFakeWall(self.mapMatrix)
+        walls2 = self.buildFakeWall(mapMatrix)
         self.drawMap(surface, walls2, 2)
-
 
 pygame.quit()
