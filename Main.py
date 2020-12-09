@@ -29,6 +29,10 @@ while running:
     for event in pg.event.get():
         if event.type == pg.QUIT:
             running = False
+        if gameFlag:
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_SPACE and not gameLoop.player.placedBomb:   # Place bombs
+                    gameLoop.player.placeBomb()
 
     if menuFlag:   # Draws everything on the menu screen
         menu.draw()

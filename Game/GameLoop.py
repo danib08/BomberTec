@@ -35,5 +35,5 @@ class GameLoop:
         self.allPlayers.draw(self.screen)
 
         for player in self.allPlayers.sprites():
-            if player.placeBomb:
+            if player.placedBomb:
                 player.bomb.draw(self.screen)

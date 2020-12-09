@@ -19,7 +19,7 @@ class Player(pg.sprite.Sprite):
         self.rect = self.image.get_rect()  # Fetch the rectangle object that has the dimensions of the image
 
         self.bomb = Bomb(screenHeight, screenHeight)  # Creates a bomb sprite
-        self.placeBomb = False
+        self.placedBomb = False
 
     def update(self, keys, blocks, fakeBlocks):
         """
@@ -45,9 +45,6 @@ class Player(pg.sprite.Sprite):
             self.rect.move_ip(5,0)
             if self.rect.collidelist(blocks) != -1 or self.rect.collidelist(fakeBlocks) != -1:
                 self.rect.move_ip(-5,0)
-        if keys[pg.K_SPACE]:
-            self.bomb.setCenter(self.rect.center)
-            self.placeBomb = True
 
         # Keep player on-screen
         if self.rect.left < 0:
@@ -58,6 +55,10 @@ class Player(pg.sprite.Sprite):
             self.rect.top = 0
         if self.rect.bottom >= self.screenH:
             self.rect.bottom = self.screenH
+
+    def placeBomb(self):
+        self.bomb.setCoord(self.rect.centerx, self.rect.centery)
+        self.placedBomb = True
 
 class Bomb(pg.sprite.Sprite):
     """
@@ -73,22 +74,35 @@ class Bomb(pg.sprite.Sprite):
         super().__init__()
         self.screenW = screenWidth
         self.screenH = screenHeight
-        self.image = pg.Surface((25, 25))
-        self.image.fill((255,25,25))
+        self.image = pg.Surface((40, 40))
+        self.image.fill((255, 25, 25))
         self.rect = self.image.get_rect()
 
-    def setCenter(self, center):
-        self.rect.center = center
+    def setCoord(self, playerCenterX, playerCenterY):
+        wallWidth = 40
+        bombX = 0
+        bombY = 0
+        foundX = False
+        foundY = False
+        if playerCenterX % wallWidth == 0 or playerCenterY % wallWidth == 0:
+            if playerCenterX % wallWidth == 0:
+                bombX = playerCenterX
+                foundX = True
+            if playerCenterY % wallWidth == 0:
+                bombY = playerCenterY
+                foundY = True
+        if not foundX:
+            x1 = 0
+            while not x1 < playerCenterX < x1 + wallWidth :
+                x1 += wallWidth
+            bombX = x1
+        if not foundY:
+            y1 = 0
+            while not y1 < playerCenterX < y1 + wallWidth:
+                y1 += wallWidth
+            bombY = y1
+
+        self.rect.topleft = (bombX, bombY)
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
-
-    # def update(self):
-    #     if self.rect.left < 0:
-    #         self.rect.left = 0
-    #     if self.rect.right > self.screenW:
-    #         self.rect.right = self.screenW
-    #     if self.rect.top <= 0:
-    #         self.rect.top = 0
-    #     if self.rect.bottom >= self.screenH:
-    #         self.rect.bottom = self.screenH
