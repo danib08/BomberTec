@@ -28,7 +28,7 @@ menu = Menu(screen)
 gameMap = GameMap()
 
 all_sprites_list = pg.sprite.Group()
-player = Player()
+player = Player(displayWidth, displayHeight)
 all_sprites_list.add(player)
 
 ## Loop that controls the game
@@ -44,11 +44,13 @@ while running:
             gameFlag = True
 
     elif gameFlag:
+        screen.fill((0, 153, 77))
+
         if not firstBuild:  # Initializes the map and draws it
-            screen.fill((0, 153, 77))
             gameMap.test(screen)
             firstBuild = True
 
+        gameMap.drawMap(screen)
         keys = pg.key.get_pressed()
         all_sprites_list.update(keys)
         all_sprites_list.draw(screen)

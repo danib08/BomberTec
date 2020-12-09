@@ -8,6 +8,10 @@ pygame.init()
 ## This class represents the game map
 class GameMap:
 
+    def __init__(self):
+        self.walls = []
+        self.fakeWalls = []
+
     ## Draws a wall on-screen
     #  @param self The object pointer
     #  @param surface
@@ -63,11 +67,10 @@ class GameMap:
     #  @param surface
     #  @param walls
     # @param num
-    def drawMap(self, surface, walls, num):
-        for wall in walls:
-            if num == 1:
-                self.drawWall(surface, wall)
-            else:
+    def drawMap(self, surface):
+        for wall in self.walls:
+            self.drawWall(surface, wall)
+        for wall in self.fakeWalls:
                 self.drawFakeWalls(surface, wall)
 
     def createFakeBlocks(self, map):
@@ -101,9 +104,8 @@ class GameMap:
         my_map = CreateMap.CreateMap()
         mapMatrix = my_map.create_grid()
         mapMatrix = self.createFakeBlocks(mapMatrix)
-        walls = self.buildMap(mapMatrix)
-        self.drawMap(surface, walls, 1)
-        walls2 = self.buildFakeWall(mapMatrix)
-        self.drawMap(surface, walls2, 2)
+        self.walls = self.buildMap(mapMatrix)
+        self.fakeWalls = self.buildFakeWall(mapMatrix)
+        self.drawMap(surface)
 
 pygame.quit()
