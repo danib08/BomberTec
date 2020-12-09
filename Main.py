@@ -2,14 +2,12 @@
 
 import pygame as pg
 import sys
-from pygame.locals import QUIT
 from Game.Menu import Menu
-from Map.GameMap import GameMap
-from Game.Player import Player
+from Game.MainLoop import MainLoop
 
 pg.init()
 
-displayWidth = 1280
+displayWidth = 1480
 displayHeight = 720
 screen = pg.display.set_mode((displayWidth, displayHeight))
 pg.display.set_caption("BomberTec")
@@ -21,17 +19,12 @@ clock = pg.time.Clock()
 running = True
 menuFlag = True
 gameFlag = False
-firstBuild = False
 
 # Instances of the screens are created
 menu = Menu(screen)
-gameMap = GameMap()
+gameLoop = MainLoop(screen, displayWidth-200, displayHeight)
 
-all_sprites_list = pg.sprite.Group()
-player = Player(displayWidth, displayHeight)
-all_sprites_list.add(player)
-
-## Loop that controls the game
+# Loop that controls the game
 while running:
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -44,16 +37,7 @@ while running:
             gameFlag = True
 
     elif gameFlag:
-        screen.fill((0, 153, 77))
-
-        if not firstBuild:  # Initializes the map and draws it
-            gameMap.test(screen)
-            firstBuild = True
-
-        gameMap.drawMap(screen)
-        keys = pg.key.get_pressed()
-        all_sprites_list.update(keys)
-        all_sprites_list.draw(screen)
+        gameLoop.run()
 
     pg.display.flip()
     clock.tick(60)
