@@ -3,7 +3,7 @@
 import pygame as pg
 import sys
 from Game.Menu import Menu
-from Game.MainLoop import MainLoop
+from Game.GameLoop import GameLoop
 
 pg.init()
 
@@ -22,7 +22,7 @@ gameFlag = False
 
 # Instances of the screens are created
 menu = Menu(screen)
-gameLoop = MainLoop(screen, displayWidth-200, displayHeight)
+gameLoop = GameLoop(screen, displayWidth - 200, displayHeight)
 
 # Loop that controls the game
 while running:
