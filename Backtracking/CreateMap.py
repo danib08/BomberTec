@@ -1,8 +1,8 @@
 from random import randint
 
-
 class CreateMap:
-    """ ! Creates the game map.
+    """
+    Creates the game map.
     Includes the non-destroyable blocks within the map ensuring that players can access other players within the map.
     """
 
@@ -157,6 +157,3 @@ class CreateMap:
             for j in i:
                 temp += str(j) + "  "
             print(temp)
-
-
-

@@ -1,46 +1,46 @@
 # Main File
+
 import pygame as pg
 import sys
-from pygame.locals import QUIT
-from Game.Menu import *
-from Map.GameMap import GameMap
+from Game.Menu import Menu
+from Game.GameLoop import GameLoop
 
 pg.init()
 
-displayWidth = 1280
+displayWidth = 1480
 displayHeight = 720
-window = pg.display.set_mode((displayWidth, displayHeight))
+screen = pg.display.set_mode((displayWidth, displayHeight))
 pg.display.set_caption("BomberTec")
-window.fill((187,153,255))
+screen.fill((187, 153, 255))
 
 clock = pg.time.Clock()
+
+# Flags
 running = True
 menuFlag = True
 gameFlag = False
-firstBuild = False
 
-## Loop that controls the game
+# Instances of the screens are created
+menu = Menu(screen)
+gameLoop = GameLoop(screen, displayWidth - 200, displayHeight)
+
+# Loop that controls the game
 while running:
-    #clock.tick(60)
-    menu = Menu(window)
-    gameMap = GameMap()
+    for event in pg.event.get():
+        if event.type == pg.QUIT:
+            running = False
 
-    if menuFlag:
+    if menuFlag:   # Draws everything on the menu screen
         menu.draw()
         if menu.clicked:
             menuFlag = False
             gameFlag = True
 
     elif gameFlag:
-        if not firstBuild:
-            window.fill((0,153,77))
-            gameMap.test(window)
-            firstBuild = True
+        gameLoop.run()
 
-    for event in pg.event.get():
-        if event.type == pg.locals.QUIT:
-            running = False
-            pg.quit()
-            sys.exit()
+    pg.display.flip()
+    clock.tick(60)
 
-        pg.display.update()
+pg.quit()
+sys.exit()
