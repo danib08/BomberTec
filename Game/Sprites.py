@@ -144,11 +144,12 @@ class Bomb(pg.sprite.Sprite):
         """
         screen.blit(self.image, self.rect)
 
-    def explode(self, fakeBlocks, characters):
+    def explode(self, fakeBlocks, characters, mapMatrix):
         """
         Destroys the fake walls adjacent to the bomb
         :param fakeBlocks: list of all fake walls on the map
         :param characters: sprite group of all the characters on the game
+        :param mapMatrix: the matrix that represents the game map
         :return: null
         """
         # This coordinates are used to check for collisions with walls
@@ -158,18 +159,20 @@ class Bomb(pg.sprite.Sprite):
         right = (self.rect.centerx + 30, self.rect.centery)
 
         index = 0
-        for rect in fakeBlocks:
+        for rect in fakeBlocks:  # Destroy blocks and update map matrix
             if rect.collidepoint(up) or rect.collidepoint(down) or rect.collidepoint(left) or rect.collidepoint(right):
                 fakeBlocks.pop(index)
+                mapMatrix[rect.i][rect.j] = "0"
             index += 1
 
+        # Rects for character and bomb collision
         rectUp = pg.Rect(self.rect.topleft[0], self.rect.topleft[1]-40, 40, 40)
         rectDown = pg.Rect(self.rect.bottomleft[0], self.rect.bottomleft[1], 40, 40)
         rectLeft = pg.Rect(self.rect.topleft[0]-40, self.rect.topleft[1], 40, 40)
         rectRight = pg.Rect(self.rect.topright[0], self.rect.topright[1], 40, 40)
 
         index = 0
-        for character in characters.sprites():
+        for character in characters.sprites():  # Checks every character for bomb collision
             if character.rect.colliderect(rectUp) or character.rect.colliderect(rectDown) or \
                     character.rect.colliderect(rectLeft) or character.rect.colliderect(rectRight) or \
                     character.rect.colliderect(self.rect):

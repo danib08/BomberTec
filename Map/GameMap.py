@@ -10,6 +10,7 @@ class GameMap:
     def __init__(self):
         self.walls = []
         self.fakeWalls = []
+        self.mapMatrix = []
 
     ## Draws a wall on-screen
     #  @param self The object pointer
@@ -27,7 +28,7 @@ class GameMap:
         for i in range(len(new_map)):
             for j in range(len(new_map[0])):
                 if new_map[i][j] == "1":
-                    self.walls.append(Wall(x, y, 40, 40, i, j))
+                    self.walls.append(pygame.Rect(x, y, 40, 40))
 
                 x += 40
             x = 0
@@ -95,10 +96,12 @@ class GameMap:
         # path = AStarAlgorithm.AStar.astar(self.mapMatrix, start, end)
         # print(path)
         my_map = CreateMap.CreateMap()
-        mapMatrix = my_map.create_grid()
-        mapMatrix = self.createFakeBlocks(mapMatrix)
-        self.buildMap(mapMatrix)
-        self.buildFakeWall(mapMatrix)
+        # mapMatrix = my_map.create_grid()
+        self.mapMatrix = my_map.create_grid()
+        # mapMatrix = self.createFakeBlocks(mapMatrix)
+        self.mapMatrix = self.createFakeBlocks(self.mapMatrix)
+        self.buildMap(self.mapMatrix)
+        self.buildFakeWall(self.mapMatrix)
         self.drawMap(surface)
 
 pygame.quit()

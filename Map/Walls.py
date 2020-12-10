@@ -7,7 +7,7 @@ class Wall(pg.Rect):
     """
     def __init__(self, left, top, width, height, i, j):
         """
-        Constructor for the wall.
+        Constructor for the wall
         :param left: left side coordinate
         :param top: top side coordinate
         :param width: rectangle width

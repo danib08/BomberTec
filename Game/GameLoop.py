@@ -44,7 +44,7 @@ class GameLoop:
                     character.bomb.draw(self.screen)
                 if character.bomb.time == 0:
                     character.placedBomb = False
-                    character.bomb.explode(self.gameMap.fakeWalls, self.allCharacters)
+                    character.bomb.explode(self.gameMap.fakeWalls, self.allCharacters, self.gameMap.mapMatrix)
                     character.bomb.resetTime()
 
         self.gameMap.drawMap(self.screen)
