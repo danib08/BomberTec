@@ -47,13 +47,37 @@ class StatsScreen:
         :return: null
         """
         self.screen.blit(self.surf, (1280,0))
-        livesText = Text(self.screen, "Lives: %s" % playerLives, 1370, 50, (0, 0, 0), 35)
+        livesText = Text(self.screen, "Lives: %s" % playerLives, 1370, 50, (0, 0, 0), 25)
         livesText.drawText()
+
+        powerUpsText = Text(self.screen, "Power-Ups:", 1370, 200, (0, 0, 0), 25)
+        powerUpsText.drawText()
+
+        pinkRect = pg.Rect(1300, 250, 30, 30)
+        blueRect = pg.Rect(1300, 300, 30, 30)
+        orangeRect = pg.Rect(1300, 350, 30, 30)
+        brownRect = pg.Rect(1300, 410, 30, 30)
+
+        pg.draw.rect(self.screen, (255,102,229), pinkRect)
+        pg.draw.rect(self.screen, (25,64,255), blueRect)
+        pg.draw.rect(self.screen, (255,140,25), orangeRect)
+        pg.draw.rect(self.screen, (102, 68, 0), brownRect)
+
+        oneUpText = Text(self.screen, "Life +1", 1380, 267, (0, 0, 0), 25)
+        oneUpText.drawText()
+        shieldText = Text(self.screen, "Shield: no", 1405, 316, (0, 0, 0), 25)
+        shieldText.drawText()
+        crossText = Text(self.screen, "Cross-Bomb:", 1400, 365, (0, 0, 0), 21)
+        crossText.drawText()
+        crossActiveText = Text(self.screen, "No", 1390, 390, (0, 0, 0), 25)
+        crossActiveText.drawText()
+        crossText = Text(self.screen, "Shoe: no", 1390, 428, (0, 0, 0), 25)
+        crossText.drawText()
 
 class GameOver:
     """
-      Represents the game over screen
-      """
+    Represents the game over screen
+    """
 
     def __init__(self, screen):
         """
