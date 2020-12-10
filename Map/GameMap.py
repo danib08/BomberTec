@@ -17,7 +17,7 @@ class GameMap:
     #  @param surface
     #  @param rectangle
     def drawWall(self, surface, rectangle):
-        pygame.draw.rect(surface, (32,32,32), rectangle)
+        pygame.draw.rect(surface, (32, 32, 32), rectangle)
 
     ## Draws a wall on-screen
     #  @param self The object pointer
@@ -54,7 +54,7 @@ class GameMap:
     #  @param surface
     #  @param rectangle
     def drawFakeWalls(self, surface, rectangle):
-        pygame.draw.rect(surface, (104,104,104), rectangle)
+        pygame.draw.rect(surface, (104, 104, 104), rectangle)
 
     ## Draw the map on-screen
     #  @param self The object pointer
@@ -85,7 +85,26 @@ class GameMap:
         map[17][0] = "0"
         map[17][1] = "0"
         map[16][1] = "0"
-
+        map[8][0] = "0"
+        map[8][1] = "0"
+        map[10][0] = "0"
+        map[10][1] = "0"
+        map[9][1] = "0"
+        map[9][30] = "0"
+        map[8][31] = "0"
+        map[10][31] = "0"
+        map[10][30] = "0"
+        map[8][30] = "0"
+        map[0][17] = "0"
+        map[0][15] = "0"
+        map[1][15] = "0"
+        map[1][17] = "0"
+        map[1][16] = "0"
+        map[17][17] = "0"
+        map[17][15] = "0"
+        map[16][15] = "0"
+        map[16][17] = "0"
+        map[16][16] = "0"
         return map
 
     ## Temporary method that generates a map
