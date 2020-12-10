@@ -4,25 +4,35 @@ from Map import AStarAlgorithm
 from Backtracking import CreateMap
 from Map.Walls import Wall
 
-## This class represents the game map
 class GameMap:
-
+    """
+    Class GameMap that create and manage de map
+    """
     def __init__(self):
+        """
+        Constructor method of GameMap class
+        """
         self.walls = []
         self.fakeWalls = []
+        self.backMatrix = []
         self.mapMatrix = []
 
-    ## Draws a wall on-screen
-    #  @param self The object pointer
-    #  @param surface
-    #  @param rectangle
     def drawWall(self, surface, rectangle):
+        """
+        draw and add the wall on the screen
+        :param surface: Window
+        :param rectangle: py.rect (wall)
+        """
         pygame.draw.rect(surface, (32, 32, 32), rectangle)
 
-    ## Draws a wall on-screen
-    #  @param self The object pointer
-    #  @param new_map
     def buildMap(self, new_map):
+        """
+        Method that create and add the py.rect into the walls list
+        Also this method only works for the indestructible blocks
+        :param new_map: matrix that is the template of the map
+        :return: walls: list of indestructible blocks
+        """
+        walls = []
         x = 0
         y = 0
         for i in range(len(new_map)):
@@ -34,10 +44,13 @@ class GameMap:
             x = 0
             y += 40
 
-    ## Draws a wall on-screen
-    #  @param self The object pointer
-    #  @param new_map
     def buildFakeWall(self, new_map):
+        """
+        Method that create and add the py.rect into the walls2 list
+        Also this method only works for the destructible blocks
+        :param new_map: matrix that is the template of the map
+        :return: walls2: list of destructible blocks
+        """
         x = 0
         y = 0
         for i in range(len(new_map)):
@@ -49,25 +62,33 @@ class GameMap:
             x = 0
             y += 40
 
-    ## Draws a wall on-screen
-    #  @param self The object pointer
-    #  @param surface
-    #  @param rectangle
+
     def drawFakeWalls(self, surface, rectangle):
+        """
+        draw and add the wall on the screen
+        :param surface: Window
+        :param rectangle: py.rect (wall)
+        """
         pygame.draw.rect(surface, (104, 104, 104), rectangle)
 
-    ## Draw the map on-screen
-    #  @param self The object pointer
-    #  @param surface
-    #  @param walls
-    # @param num
     def drawMap(self, surface):
+        """
+        This method scroll through the list and iterate through to create the walls
+        :param surface: window
+        :return:
+        """
         for wall in self.walls:
             self.drawWall(surface, wall)
         for wall in self.fakeWalls:
                 self.drawFakeWalls(surface, wall)
 
     def createFakeBlocks(self, map):
+        """
+        Method that edit the matrix template and add the fakewalls symbol into the matrix
+        Also edit the free space for the players
+        :param map: matrix that is the template of the map
+        :return: map: matrix that is the new template of the map
+        """
         for i in range(0, 17):
             for j in range(0, 31):
                 flag = bool(random.getrandbits(1))
@@ -107,18 +128,37 @@ class GameMap:
         map[16][16] = "0"
         return map
 
-    ## Temporary method that generates a map
-    #  @param surface
-    def test(self, surface):
-        # start = (1, 1)
-        # end = (7, 14)
-        # path = AStarAlgorithm.AStar.astar(self.mapMatrix, start, end)
-        # print(path)
-        my_map = CreateMap.CreateMap()
-        self.mapMatrix = my_map.create_grid()
-        self.mapMatrix = self.createFakeBlocks(self.mapMatrix)
-        self.buildMap(self.mapMatrix)
-        self.buildFakeWall(self.mapMatrix)
-        self.drawMap(surface)
+    def adaptiveMatrix(self, map):
+        newMatrix = []
+        row = []
+        for i in range(0, 17):
+            for j in range(0, 31):
+                if map[i][j] == "0" or map[i][j] == "2":
+                    row.append(0)
+                elif map[i][j] == "1":
+                    row.append(1)
+                else:
+                    row.append(0)
+            newMatrix.append(row)
+            row = []
+        self.mapMatrix = newMatrix
 
-pygame.quit()
+    def run(self, surface):
+        """
+        Method that start the map on screen
+        :param surface: window
+
+        """
+        my_map = CreateMap.CreateMap()
+        self.backMatrix = my_map.create_grid()
+        self.backMatrix = self.createFakeBlocks(self.backMatrix)
+        self.buildMap(self.backMatrix)
+        self.buildFakeWall(self.backMatrix)
+        self.drawMap(surface)
+        start = (1, 1)
+        end = (7, 14)
+        self.adaptiveMatrix(self.backMatrix)
+        path = AStarAlgorithm.AStar()
+        path.astar(self.mapMatrix, start, end)
+
+

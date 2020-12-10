@@ -1,15 +1,42 @@
 class Node:
+    """
+    class Node for AStar
+    """
     def __init__(self, parent=None, position=None):
+        """
+        Constructor for node class
+        :param parent: before position
+        :param position: current position
+        """
         self.parent = parent
         self.position = position
         self.g = 0
         self.h = 0
         self.f = 0
     def __eq__(self, other):
+        """
+        change the positions
+        :param other:
+        :return: new position
+        """
         return self.position == other.position
-class AStar:
 
-    def astar(maze, start, end):
+class AStar:
+    """
+    class AStar
+    """
+    def __init__(self):
+        """
+        constructor method
+        """
+    def astar(self, maze, start, end):
+        """
+        Method that do the A Star Algorithm
+        :param maze: map template
+        :param start: start coordinates into matrix
+        :param end: end coordinates into the matrix
+        :return: the path of the shortest route
+        """
         start_node = Node(None, start)
         start_node.g = start_node.h = start_node.f = 0
         end_node = Node(None, end)

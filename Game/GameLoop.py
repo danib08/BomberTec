@@ -29,7 +29,7 @@ class GameLoop:
 
     def run(self):
         if not self.firstBuild:  # Initializes the map and draws it
-            self.gameMap.test(self.screen)
+            self.gameMap.run(self.screen)
             self.firstBuild = True
 
         self.screen.fill((0, 153, 77))
@@ -45,7 +45,7 @@ class GameLoop:
                     character.bomb.draw(self.screen)
                 if character.bomb.time == 0:
                     character.placedBomb = False
-                    character.bomb.explode(self.gameMap.fakeWalls, self.allCharacters, self.gameMap.mapMatrix)
+                    character.bomb.explode(self.gameMap.fakeWalls, self.allCharacters, self.gameMap.backMatrix)
                     character.bomb.resetTime()
 
         self.gameMap.drawMap(self.screen)
