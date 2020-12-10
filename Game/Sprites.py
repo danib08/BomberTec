@@ -1,4 +1,5 @@
 import pygame as pg
+import random
 
 class Player(pg.sprite.Sprite):
     """
@@ -22,7 +23,7 @@ class Player(pg.sprite.Sprite):
         self.bomb = Bomb(screenHeight, screenHeight)  # Creates a bomb sprite
         self.placedBomb = False
 
-    def update(self, keys, blocks, fakeBlocks):
+    def update(self, keys, blocks, fakeBlocks, powerUps):
         """
         Updates the player according to the keys pressed and detected collisions.
         :param keys: A list of all the keys pressed per frame
@@ -192,12 +193,13 @@ class Bomb(pg.sprite.Sprite):
         """
         screen.blit(self.image, self.rect)
 
-    def explode(self, fakeBlocks, characters, mapMatrix):
+    def explode(self, fakeBlocks, characters, mapMatrix, powerUps):
         """
         Destroys the fake walls adjacent to the bomb and hits players
         :param fakeBlocks: list of all fake walls on the map
         :param characters: sprite group of all the characters on the game
         :param mapMatrix: the matrix that represents the game map
+        :param powerUps: sprite group of all the power ups on the map
         :return: null
         """
 
@@ -208,13 +210,29 @@ class Bomb(pg.sprite.Sprite):
         rectRight = pg.Rect(self.rect.topright[0], self.rect.topright[1], 40, 40)
 
         index = 0
-        blocksDestroyed = 0
         for rect in fakeBlocks:  # Destroy blocks and update map matrix
             if rect.colliderect(rectUp) or rect.colliderect(rectDown) or rect.colliderect(rectLeft) or \
                     rect.colliderect(rectRight):
-                fakeBlocks.pop(index)
                 mapMatrix[rect.i][rect.j] = 0
-                blocksDestroyed += 1
+
+                # Power-Up probability
+                prob = random.randint(0, 4)
+                if prob == 0 or prob == 3:  # 40% chance to generate a power up
+                    prob = random.randint(0, 3)
+                    if prob == 0:
+                        typeP = "life"
+                    elif prob == 1:
+                        typeP = "shield"
+                    elif prob == 2:
+                        typeP = "cross"
+                    else:
+                        typeP = "shoe"
+
+                    newPow = PowerUp(typeP, rect.centerx, rect.centery)
+                    powerUps.add(newPow)
+
+                fakeBlocks.pop(index)
+
             index += 1
 
         index = 0
@@ -224,7 +242,7 @@ class Bomb(pg.sprite.Sprite):
                     character.rect.colliderect(self.rect):
                 character.lives -= 1
                 if character.lives == 0:
-                    pass
+                    character.kill()
                     # TODO: delete from sprite group and stop showing it on screen
             index += 1
 
@@ -243,7 +261,7 @@ class PowerUp(pg.sprite.Sprite):
         """
         super().__init__()
         self.type = typeP
-        self.image = pg.Surface((30, 30))
+        self.image = pg.Surface((20, 20))
         self.type = typeP
 
         if self.type == "life":
@@ -257,3 +275,6 @@ class PowerUp(pg.sprite.Sprite):
 
         self.rect = self.image.get_rect()
         self.rect.center = (centerX, centerY)
+
+    def assignPowerUp(self, character):
+        pass

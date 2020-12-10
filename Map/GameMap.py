@@ -155,10 +155,4 @@ class GameMap:
         self.buildMap(self.backMatrix)
         self.buildFakeWall(self.backMatrix)
         self.drawMap(surface)
-        start = (1, 1)
-        end = (7, 14)
         self.adaptiveMatrix(self.backMatrix)
-        path = AStarAlgorithm.AStar()
-        path.astar(self.mapMatrix, start, end)
-
-
