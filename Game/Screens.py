@@ -40,10 +40,11 @@ class StatsScreen:
         self.surf = pg.Surface((200, 720))
         self.surf.fill((157, 105, 163))
 
-    def draw(self, playerLives):
+    def draw(self, playerLives, shield):
         """
         Draws all of the objects of the stats screen
         :param playerLives: the number of lives the player has
+        :param shield: boolean that states if the player has an active shield power-up
         :return: null
         """
         self.screen.blit(self.surf, (1280,0))
@@ -65,7 +66,13 @@ class StatsScreen:
 
         oneUpText = Text(self.screen, "Life +1", 1380, 267, (0, 0, 0), 25)
         oneUpText.drawText()
-        shieldText = Text(self.screen, "Shield: no", 1405, 316, (0, 0, 0), 25)
+
+        if shield:
+            shieldFill = "yes"
+        else:
+            shieldFill = "no"
+
+        shieldText = Text(self.screen, "Shield: %s" % shieldFill, 1405, 316, (0, 0, 0), 25)
         shieldText.drawText()
         crossText = Text(self.screen, "Cross-Bomb:", 1400, 365, (0, 0, 0), 21)
         crossText.drawText()

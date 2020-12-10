@@ -20,6 +20,7 @@ class Player(pg.sprite.Sprite):
         self.rect = self.image.get_rect()  # Fetch the rectangle object that has the dimensions of the image
 
         self.lives = 3
+        self.shield = False
         self.bomb = Bomb(screenHeight, screenHeight)  # Creates a bomb sprite
         self.placedBomb = False
 
@@ -89,6 +90,7 @@ class Enemy(pg.sprite.Sprite):
         self.rect = self.image.get_rect()  # Fetch the rectangle object that has the dimensions of the image
 
         self.lives = lives
+        self.shield = False
         self.speed = speed
         self.bomb = Bomb(screenHeight, screenHeight)  # Creates a bomb sprite
         self.placedBomb = False
@@ -240,10 +242,14 @@ class Bomb(pg.sprite.Sprite):
             if character.rect.colliderect(rectUp) or character.rect.colliderect(rectDown) or \
                     character.rect.colliderect(rectLeft) or character.rect.colliderect(rectRight) or \
                     character.rect.colliderect(self.rect):
-                character.lives -= 1
+                if character.shield: # TODO: check if enemies shield works
+                    character.shield = False
+                else:
+                    character.lives -= 1
+
                 if character.lives == 0:
                     character.kill()
-                    # TODO: delete from sprite group and stop showing it on screen
+                    # TODO: check if enemies are removed when dead
             index += 1
 
 class PowerUp(pg.sprite.Sprite):
@@ -277,4 +283,8 @@ class PowerUp(pg.sprite.Sprite):
         self.rect.center = (centerX, centerY)
 
     def assignPowerUp(self, character):
-        pass
+        # TODO: check if enemies power-ups work
+        if self.type == "life":
+            character.lives += 1
+        elif self.type == "shield":
+            character.shield = True

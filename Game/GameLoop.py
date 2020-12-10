@@ -56,7 +56,7 @@ class GameLoop:
                     character.bomb.resetTime()
 
         self.gameMap.drawMap(self.screen)
-        self.statsScreen.draw(self.player.lives)
+        self.statsScreen.draw(self.player.lives, self.player.shield)
         self.allPowerUps.draw(self.screen)
 
         if self.player.lives == 0:
