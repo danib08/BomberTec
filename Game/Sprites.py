@@ -18,6 +18,7 @@ class Player(pg.sprite.Sprite):
         self.image.fill((25,217,255))
         self.rect = self.image.get_rect()  # Fetch the rectangle object that has the dimensions of the image
 
+        self.lives = 3
         self.bomb = Bomb(screenHeight, screenHeight)  # Creates a bomb sprite
         self.placedBomb = False
 
@@ -143,12 +144,14 @@ class Bomb(pg.sprite.Sprite):
         """
         screen.blit(self.image, self.rect)
 
-    def explode(self, fakeBlocks):
+    def explode(self, fakeBlocks, characters):
         """
         Destroys the fake walls adjacent to the bomb
         :param fakeBlocks: list of all fake walls on the map
+        :param characters: sprite group of all the characters on the game
         :return: null
         """
+        # This coordinates are used to check for collisions with walls
         up = (self.rect.centerx, self.rect.centery - 30)
         down = (self.rect.centerx, self.rect.centery + 30)
         left = (self.rect.centerx - 30, self.rect.centery)
@@ -158,4 +161,20 @@ class Bomb(pg.sprite.Sprite):
         for rect in fakeBlocks:
             if rect.collidepoint(up) or rect.collidepoint(down) or rect.collidepoint(left) or rect.collidepoint(right):
                 fakeBlocks.pop(index)
-            index+= 1
+            index += 1
+
+        rectUp = pg.Rect(self.rect.topleft[0], self.rect.topleft[1]-40, 40, 40)
+        rectDown = pg.Rect(self.rect.bottomleft[0], self.rect.bottomleft[1], 40, 40)
+        rectLeft = pg.Rect(self.rect.topleft[0]-40, self.rect.topleft[1], 40, 40)
+        rectRight = pg.Rect(self.rect.topright[0], self.rect.topright[1], 40, 40)
+
+        index = 0
+        for character in characters.sprites():
+            if character.rect.colliderect(rectUp) or character.rect.colliderect(rectDown) or \
+                    character.rect.colliderect(rectLeft) or character.rect.colliderect(rectRight) or \
+                    character.rect.colliderect(self.rect):
+                character.lives -= 1
+                if character.lives == 0:
+                    pass
+                    # TODO: delete from sprite group and stop showing it on screen
+            index += 1

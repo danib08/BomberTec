@@ -2,7 +2,8 @@
 
 import pygame as pg
 import sys
-from Game.Menu import Menu
+from Game.Screens import Menu
+from Game.Screens import GameOver
 from Game.GameLoop import GameLoop
 
 pg.init()
@@ -19,9 +20,11 @@ clock = pg.time.Clock()
 running = True
 menuFlag = True
 gameFlag = False
+overFlag = False
 
 # Instances of the screens are created
 menu = Menu(screen)
+gameOver = GameOver(screen)
 gameLoop = GameLoop(screen, displayWidth - 200, displayHeight)
 
 # Loop that controls the game
@@ -41,7 +44,18 @@ while running:
             gameFlag = True
 
     elif gameFlag:
-        gameLoop.run()
+        game = gameLoop.run()
+        if game == 1:
+            gameFlag = False
+            overFlag = True
+            gameOver.clicked = False
+
+    elif overFlag:
+        gameOver.draw()
+        if gameOver.clicked:
+            gameLoop = GameLoop(screen, displayWidth - 200, displayHeight)
+            overFlag = False
+            gameFlag = True
 
     pg.display.flip()
     clock.tick(60)
