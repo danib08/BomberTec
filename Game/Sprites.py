@@ -213,7 +213,7 @@ class Bomb(pg.sprite.Sprite):
             if rect.colliderect(rectUp) or rect.colliderect(rectDown) or rect.colliderect(rectLeft) or \
                     rect.colliderect(rectRight):
                 fakeBlocks.pop(index)
-                mapMatrix[rect.i][rect.j] = "0"
+                mapMatrix[rect.i][rect.j] = 0
                 blocksDestroyed += 1
             index += 1
 

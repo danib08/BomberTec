@@ -36,7 +36,7 @@ class CreateMap:
         if not self.checkPaths(matrix):
             for i in matrix:
                 for j in range(len(i)):
-                    if i[j] is "1":
+                    if i[j] == "1":
                         i[j] = "0"
             self.setNonDestructibleItems(matrix, items)
 
@@ -108,7 +108,6 @@ class CreateMap:
                 if i == j:
                     continue
                 if not self.DFS(self.getPlayerPosition(i), j, matrix, []):
-                    print(False)
                     return False
         return True
 
