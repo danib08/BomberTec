@@ -1,9 +1,8 @@
 import random
-
 import pygame
 from Map import AStarAlgorithm
 from Backtracking import CreateMap
-pygame.init()
+from Map.Walls import Wall
 
 ## This class represents the game map
 class GameMap:
@@ -11,6 +10,7 @@ class GameMap:
     def __init__(self):
         self.walls = []
         self.fakeWalls = []
+        self.mapMatrix = []
 
     ## Draws a wall on-screen
     #  @param self The object pointer
@@ -23,37 +23,31 @@ class GameMap:
     #  @param self The object pointer
     #  @param new_map
     def buildMap(self, new_map):
-        walls = []
         x = 0
         y = 0
         for i in range(len(new_map)):
             for j in range(len(new_map[0])):
                 if new_map[i][j] == "1":
-                    walls.append(pygame.Rect(x, y, 40, 40))
+                    self.walls.append(pygame.Rect(x, y, 40, 40))
 
                 x += 40
             x = 0
             y += 40
-
-        return walls
 
     ## Draws a wall on-screen
     #  @param self The object pointer
     #  @param new_map
     def buildFakeWall(self, new_map):
-        walls2 = []
         x = 0
         y = 0
         for i in range(len(new_map)):
             for j in range(len(new_map[0])):
                 if new_map[i][j] == "2":
-                    walls2.append(pygame.Rect(x, y, 40, 40))
+                    self.fakeWalls.append(Wall(x, y, 40, 40, i, j))
 
                 x += 40
             x = 0
             y += 40
-
-        return walls2
 
     ## Draws a wall on-screen
     #  @param self The object pointer
@@ -121,10 +115,10 @@ class GameMap:
         # path = AStarAlgorithm.AStar.astar(self.mapMatrix, start, end)
         # print(path)
         my_map = CreateMap.CreateMap()
-        mapMatrix = my_map.create_grid()
-        mapMatrix = self.createFakeBlocks(mapMatrix)
-        self.walls = self.buildMap(mapMatrix)
-        self.fakeWalls = self.buildFakeWall(mapMatrix)
+        self.mapMatrix = my_map.create_grid()
+        self.mapMatrix = self.createFakeBlocks(self.mapMatrix)
+        self.buildMap(self.mapMatrix)
+        self.buildFakeWall(self.mapMatrix)
         self.drawMap(surface)
 
 pygame.quit()
