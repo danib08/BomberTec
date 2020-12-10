@@ -22,14 +22,12 @@ class GameLoop:
 
         self.screen.fill((0, 153, 77))
 
+        # TODO: separate this code
         # ---------------------------------------
-        #TODO: separate this code
         statsSurf = pg.Surface((200,720))
         statsSurf.fill((0,85,255))
         self.screen.blit(statsSurf, (1280,0))
         # ---------------------------------------
-
-        self.gameMap.drawMap(self.screen)
 
         keys = pg.key.get_pressed()
         self.player.update(keys, self.gameMap.walls, self.gameMap.fakeWalls)
@@ -42,4 +40,7 @@ class GameLoop:
                     player.bomb.draw(self.screen)
                 if player.bomb.time == 0:
                     player.placedBomb = False
+                    player.bomb.explode(self.gameMap.fakeWalls)
                     player.bomb.resetTime()
+
+        self.gameMap.drawMap(self.screen)

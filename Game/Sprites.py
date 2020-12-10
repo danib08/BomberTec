@@ -57,9 +57,14 @@ class Player(pg.sprite.Sprite):
             self.rect.bottom = self.screenH
 
     def placeBomb(self):
+        """
+        Places a bomb on the screen
+        :return: null
+        """
         self.bomb.setCoord(self.rect.centerx, self.rect.centery)
         self.bomb.resetTime()
         self.placedBomb = True
+
 
 class Bomb(pg.sprite.Sprite):
     """
@@ -81,12 +86,20 @@ class Bomb(pg.sprite.Sprite):
         self.time = 3000
 
     def setCoord(self, playerCenterX, playerCenterY):
+        """
+        Sets the coordinates of the bomb according to the player's center coordinates
+        :param playerCenterX: The x coordinate of the player's center
+        :param playerCenterY: The y coordinate of the player's center
+        :return:
+        """
         wallWidth = 40
         bombX = 0
         bombY = 0
         foundX = False
         foundY = False
+
         if playerCenterX % wallWidth == 0 or playerCenterY % wallWidth == 0:
+            # Checks if the center fits exactly in the map block division
             if playerCenterX % wallWidth == 0:
                 bombX = playerCenterX
                 foundX = True
@@ -94,11 +107,13 @@ class Bomb(pg.sprite.Sprite):
                 bombY = playerCenterY
                 foundY = True
         if not foundX:
+            # Searches for the new x coordinate of the bomb
             x1 = 0
-            while not x1 < playerCenterX < x1 + wallWidth :
+            while not x1 < playerCenterX < x1 + wallWidth:
                 x1 += wallWidth
             bombX = x1
         if not foundY:
+            # Searches for the new y coordinate of the bomb
             y1 = 0
             while not y1 < playerCenterY < y1 + wallWidth:
                 y1 += wallWidth
@@ -107,12 +122,40 @@ class Bomb(pg.sprite.Sprite):
         self.rect.topleft = (bombX, bombY)
 
     def update(self):
+        """
+        Substracts from the "time" attribute, so the bomb is closer to explosion
+        :return: null
+        """
         self.time -= 15
 
     def resetTime(self):
+        """
+        Resets the bomb time to the initial value
+        :return:
+        """
         self.time = 3000
 
     def draw(self, screen):
+        """
+        Draws the bomb on-screen
+        :param screen: The surface where the bomb will be drawn
+        :return: null
+        """
         screen.blit(self.image, self.rect)
-        print(self.rect.topleft)
 
+    def explode(self, fakeBlocks):
+        """
+        Destroys the fake walls adjacent to the bomb
+        :param fakeBlocks: list of all fake walls on the map
+        :return: null
+        """
+        up = (self.rect.centerx, self.rect.centery - 30)
+        down = (self.rect.centerx, self.rect.centery + 30)
+        left = (self.rect.centerx - 30, self.rect.centery)
+        right = (self.rect.centerx + 30, self.rect.centery)
+
+        index = 0
+        for rect in fakeBlocks:
+            if rect.collidepoint(up) or rect.collidepoint(down) or rect.collidepoint(left) or rect.collidepoint(right):
+                fakeBlocks.pop(index)
+            index+= 1
