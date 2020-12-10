@@ -2,7 +2,7 @@ import random
 import pygame
 from Map import AStarAlgorithm
 from Backtracking import CreateMap
-from Map.Walls import Wall
+from Map.Walls import FakeWall
 
 class GameMap:
     """
@@ -16,6 +16,8 @@ class GameMap:
         self.fakeWalls = []
         self.backMatrix = []
         self.mapMatrix = []
+        self.wallImage = pygame.image.load("Resources/SolidBlock.png").convert()
+        self.wallImage = pygame.transform.scale(self.wallImage, (40, 40))
 
     def drawWall(self, surface, rectangle):
         """
@@ -24,6 +26,7 @@ class GameMap:
         :param rectangle: py.rect (wall)
         """
         pygame.draw.rect(surface, (32, 32, 32), rectangle)
+        surface.blit(self.wallImage, rectangle)
 
     def buildMap(self, new_map):
         """
@@ -32,7 +35,6 @@ class GameMap:
         :param new_map: matrix that is the template of the map
         :return: walls: list of indestructible blocks
         """
-        walls = []
         x = 0
         y = 0
         for i in range(len(new_map)):
@@ -56,7 +58,7 @@ class GameMap:
         for i in range(len(new_map)):
             for j in range(len(new_map[0])):
                 if new_map[i][j] == "2":
-                    self.fakeWalls.append(Wall(x, y, 40, 40, i, j))
+                    self.fakeWalls.append(FakeWall(x, y, 40, 40, i, j))
 
                 x += 40
             x = 0
@@ -70,6 +72,7 @@ class GameMap:
         :param rectangle: py.rect (wall)
         """
         pygame.draw.rect(surface, (104, 104, 104), rectangle)
+        surface.blit(rectangle.image, rectangle)
 
     def drawMap(self, surface):
         """
@@ -80,7 +83,7 @@ class GameMap:
         for wall in self.walls:
             self.drawWall(surface, wall)
         for wall in self.fakeWalls:
-                self.drawFakeWalls(surface, wall)
+            self.drawFakeWalls(surface, wall)
 
     def createFakeBlocks(self, map):
         """

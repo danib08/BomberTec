@@ -18,6 +18,7 @@ class GameLoop:
         self.firstBuild = False
         self.gameMap = GameMap()
         self.statsScreen = StatsScreen(self.screen)
+        self.background = pg.image.load("Resources/Grass.png").convert()
 
         self.allCharacters = pg.sprite.Group()  # TODO: add enemies to this sprite group
         self.allEnemies = pg.sprite.Group() # TODO: add enemies to this sprite group
@@ -35,7 +36,7 @@ class GameLoop:
             self.gameMap.run(self.screen)
             self.firstBuild = True
 
-        self.screen.fill((0, 153, 77))
+        self.screen.blit(self.background, (0,0))
 
         keys = pg.key.get_pressed()
         self.player.update(keys, self.gameMap.walls, self.gameMap.fakeWalls, self.allPowerUps)

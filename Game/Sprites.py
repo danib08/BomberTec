@@ -30,6 +30,7 @@ class Player(pg.sprite.Sprite):
         :param keys: A list of all the keys pressed per frame
         :param blocks: A list of pygame Rects that represent walls
         :param fakeBlocks: A list of pygame Rects that represent fake walls
+        :param powerUps: List of powerUps on the map
         :return: null
         """
         if keys[pg.K_w]:

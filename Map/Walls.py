@@ -1,6 +1,6 @@
 import pygame as pg
 
-class Wall(pg.Rect):
+class FakeWall(pg.Rect):
     """
     Class that represents a wall
     Extends from the pygame Rect class.
@@ -14,7 +14,10 @@ class Wall(pg.Rect):
         :param height: rectangle height
         :param i: map matrix i position
         :param j: map matrix j position
+
         """
         super().__init__(left, top, width, height)
         self.i = i
         self.j = j
+        self.image = pg.image.load("Resources/ExplodableBlock.png").convert()
+        self.image = pg.transform.scale(self.image, (40, 40))
