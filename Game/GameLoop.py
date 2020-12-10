@@ -19,9 +19,8 @@ class GameLoop:
         self.gameMap = GameMap()
         self.statsScreen = StatsScreen(self.screen)
         self.player = Player(displayWidth, displayHeight)
-        # TODO: create enemies
 
-        self.allCharacters = pg.sprite.Group()  # TODO: add enemies to this sprite group
+        self.allCharacters = pg.sprite.Group()
         self.allBombs = pg.sprite.Group()
 
         self.allCharacters.add(self.player)
