@@ -1,6 +1,7 @@
 import pygame as pg
 import random
 from Game.Bombs import Bomb
+from Map.AStarAlgorithm import AStar
 
 class Player(pg.sprite.Sprite):
     """
@@ -25,6 +26,7 @@ class Player(pg.sprite.Sprite):
         self.cross = False
         self.bomb = Bomb(screenHeight, screenHeight)  # Creates a bomb sprite
         self.placedBomb = False
+
 
     def update(self, keys, blocks, fakeBlocks, powerUps):
         """
@@ -108,9 +110,16 @@ class Enemy(pg.sprite.Sprite):
         self.bombProb = self.DNA[3]
         self.inAction = False
 
+        self.aStar = AStar()
+        self.path = []  # Path the enemy is following
 
-    def update(self, blocks, fakeBlocks):
+
+    def update(self, blocks, fakeBlocks, powerUps):
         # TODO: update enemy movement, right/left/up/down += self.speed
+        if len(self.path) == 0:
+            self.inAction = False
+        # else:
+
 
         # Keep enemy on-screen
         if self.rect.left < 0:
@@ -131,23 +140,103 @@ class Enemy(pg.sprite.Sprite):
         self.bomb.resetTime()
         self.placedBomb = True
 
-    def doAction(self):
+    #TODO: document
+    def doAction(self, allWalls, mapMatrix):
         if not self.inAction:
+            i = 0
+            j = 0
+            for rect in allWalls:
+                if rect.colliderect(self.rect):
+                    i = rect.i
+                    j = rect.j
             action = random.choices(self.DNA, weights=(self.DNA[0], self.DNA[1], self.DNA[2], self.DNA[3]), k=1)
             if action[0] == self.hideProb:
-                print("hide")
+                # print("hide")
                 #TODO: A*
                 pass
             elif action[0] == self.powerProb:
-                print("pow")
+                # print("pow")
                 #TODO: A*
                 pass
             elif action[0] == self.enemyProb:
-                print("enemy")
+                # print("enemy")
                 #TODO: A*
                 pass
             elif action[0] == self.bombProb:
-                print("bomb")
-                #TODO: self.placeBomb() and get away
+                self.placeBomb()
+                self.runAway(i, j, mapMatrix)
                 pass
             self.inAction = True
+
+    #TODO: document
+    def runAway(self, i, j, mapMatrix):
+        onLeftBorder = False
+        onTopBorder = False
+        onRightBorder = False
+        onBottomBorder = False
+        moveFlag = True
+        start = (i,j)
+        end = (0,0)
+
+        if i == 0:
+            onTopBorder = True
+        if j == 0:
+            onLeftBorder = True
+        if i == 17:
+            onBottomBorder = True
+        if j == 31:
+            onRightBorder = True
+
+        if onLeftBorder and onBottomBorder:
+            end = (16,1)
+        elif onLeftBorder and onTopBorder:
+            end = (1,1)
+        elif onRightBorder and onBottomBorder:
+            end = (16,30)
+        elif onRightBorder and onTopBorder:
+            end = (1,30)
+        elif onLeftBorder:
+            if mapMatrix[i-1][j+1] == 0:
+                end = (i-1,j+1)
+            elif mapMatrix[i+1][j+1] == 0:
+                end = (i+1,j+1)
+            else:
+                moveFlag = False
+        elif onRightBorder:
+            if mapMatrix[i-1][j-1] == 0:
+                end = (i-1,j-1)
+            elif mapMatrix[i+1][j-1] == 0:
+                end = (i+1,j-1)
+            else:
+                moveFlag = False
+        elif onTopBorder:
+            if mapMatrix[i+1][j-1] == 0:
+                end = (i+1,j-1)
+            elif mapMatrix[i+1][j+1] == 0:
+                end = (i+1,j+1)
+            else:
+                moveFlag = False
+        elif onBottomBorder:
+            if mapMatrix[i-1][j+1] == 0:
+                end = (i-1,j+1)
+            elif mapMatrix[i-1][j-1] == 0:
+                end = (i-1,j-1)
+            else:
+                moveFlag = False
+        else:
+            if mapMatrix[i+1][j-1] == 0:
+                end = (i+1,j-1)
+            elif mapMatrix[i+1][j+1] == 0:
+                end = (i+1,j+1)
+            elif mapMatrix[i - 1][j + 1] == 0:
+                end = (i - 1, j + 1)
+            elif mapMatrix[i - 1][j - 1] == 0:
+                end = (i - 1, j - 1)
+            else:
+                moveFlag = False
+
+        if moveFlag:
+            self.path = self.aStar.getPath(mapMatrix, start, end)
+            print(self.path)
+        else:
+            self.inAction = False

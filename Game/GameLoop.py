@@ -64,7 +64,7 @@ class GameLoop:
 
         keys = pg.key.get_pressed()
         self.player.update(keys, self.gameMap.walls, self.gameMap.fakeWalls, self.allPowerUps)
-        #TODO: self.allEnemies.update(self.gameMap.walls, self.gameMap.fakeWalls, self.allPowerUps)
+        self.allEnemies.update(self.gameMap.walls, self.gameMap.fakeWalls, self.allPowerUps)
         self.allCharacters.draw(self.screen)
 
         for character in self.allCharacters.sprites():
@@ -85,9 +85,9 @@ class GameLoop:
         self.statsScreen.draw(self.player.lives, self.player.shield)
         self.allPowerUps.draw(self.screen)
 
-        if self.counter == self.mFrames:
+        if self.counter == self.mFrames or self.firstBuild:
             for enemy in self.allEnemies:
-                enemy.doAction()
+                enemy.doAction(self.gameMap.allWalls, self.gameMap.mapMatrix)
 
         elif self.counter == self.nFrames:
             #TODO genetic again
@@ -96,8 +96,10 @@ class GameLoop:
 
         self.counter += 1
 
-
         if self.player.lives == 0:
             return 1
+        elif self.player.lives > 0 and len(self.allEnemies) == 0:
+            return 2
+            #TODO: you win (change game over text)
         else:
             return 0
