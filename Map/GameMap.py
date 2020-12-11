@@ -2,7 +2,7 @@ import random
 import pygame
 from Map import AStarAlgorithm
 from Backtracking import CreateMap
-from Map.Walls import FakeWall
+from Map.Walls import Wall
 
 class GameMap:
     """
@@ -14,6 +14,7 @@ class GameMap:
         """
         self.walls = []
         self.fakeWalls = []
+        self.allWalls = []
         self.backMatrix = []
         self.mapMatrix = []
         self.wallImage = pygame.image.load("Resources/SolidBlock.png").convert()
@@ -48,22 +49,38 @@ class GameMap:
 
     def buildFakeWall(self, new_map):
         """
-        Method that create and add the py.rect into the walls2 list
+        Method that creates and adds the Walls into the fakeWalls list
         Also this method only works for the destructible blocks
         :param new_map: matrix that is the template of the map
-        :return: walls2: list of destructible blocks
+        :return: null
         """
         x = 0
         y = 0
         for i in range(len(new_map)):
             for j in range(len(new_map[0])):
                 if new_map[i][j] == "2":
-                    self.fakeWalls.append(FakeWall(x, y, 40, 40, i, j))
+                    self.fakeWalls.append(Wall(x, y, 40, 40, i, j))
 
                 x += 40
             x = 0
             y += 40
 
+
+    def buildAllWalls(self, new_map):
+        """
+        Method that creates and add the Walls into the allWalls list
+        This method adds all of the blocks on the map (including non-walls)
+        :param new_map: matrix that is the template of the map
+        :return: null
+        """
+        x = 0
+        y = 0
+        for i in range(len(new_map)):
+            for j in range(len(new_map[0])):
+                self.allWalls.append(Wall(x, y, 40, 40, i, j))
+                x += 40
+            x = 0
+            y += 40
 
     def drawFakeWalls(self, surface, rectangle):
         """
@@ -157,5 +174,6 @@ class GameMap:
         self.backMatrix = self.createFakeBlocks(self.backMatrix)
         self.buildMap(self.backMatrix)
         self.buildFakeWall(self.backMatrix)
+        self.buildAllWalls(self.backMatrix)
         self.drawMap(surface)
         self.adaptiveMatrix(self.backMatrix)

@@ -13,8 +13,8 @@ class Genetic:
         return self.characteres
 
     #Setea la lista de individuos
-    def setCharacteres(self):
-        return self.characteres
+    def setCharacteres(self, newCharacteres):
+        self.characteres = newCharacteres
 
     #Verifica que la suma de las probabilidades sea 100
     def sumList(self, listElements):
@@ -33,7 +33,7 @@ class Genetic:
             prob = 100
             for j in range(len(nCharacter.DNA)):
                 aux = random.randint(0, prob)
-                nCharacter.DNA[j] = aux;
+                nCharacter.DNA[j] = aux
                 prob = prob - aux
                 if j == 3:
                     Genetic.sumList(self, nCharacter.DNA)
@@ -92,7 +92,7 @@ class Genetic:
     #Selección de individuos para el crossover
     #Se utiliza el metodo de la ruleta
     def selection(self, selecSize):
-        popu = self.characteres.copy();
+        popu = self.characteres.copy()
         selectedPopu = []
         i = 0
         for i in range(selecSize):
@@ -104,7 +104,7 @@ class Genetic:
                 if sumDec >= aux :
                     selectedPopu.append(character)
                     popu.remove(character)
-                    break;
+                    break
         self.setCharacteres(selectedPopu)
         print(len(selectedPopu))
 
@@ -150,14 +150,3 @@ class Genetic:
                     cant = random.randint(0, character.DNA[decre])
                     character.DNA[decre] -= cant
                     character.DNA[incre] += cant
-
-
-
-
-
-
-
-
-
-
-

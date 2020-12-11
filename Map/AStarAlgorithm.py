@@ -27,11 +27,11 @@ class AStar:
     """
     def __init__(self):
         """
-        constructor method
+        Constructor method
         """
     def astar(self, maze, start, end):
         """
-        Method that do the A Star Algorithm
+        Method that does the A Star Algorithm
         :param maze: map template
         :param start: start coordinates into matrix
         :param end: end coordinates into the matrix
