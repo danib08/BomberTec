@@ -13,7 +13,7 @@ class Genetic:
         return self.characteres
 
     #Setea la lista de individuos
-    def setCharacteres(self):
+    def setCharacteres(self, selectedPopu):
         return self.characteres
 
     #Verifica que la suma de las probabilidades sea 100
@@ -74,9 +74,9 @@ class Genetic:
     def fitness(self):
         i = 0
         for i in range (len(self.characteres)):
-            fit = self.f1(self.characteres[i].bombsRecord)\
+            fit = (self.f1(self.characteres[i].bombsRecord)\
                   + self.f2(self.characteres[i].enemiesRecord)\
-                  + self.f2(self.characteres[i].blockRecord)
+                  + self.f2(self.characteres[i].blockRecord))*10
             self.characteres[i].setFitness(fit)
 
     #Seleccion
@@ -87,21 +87,23 @@ class Genetic:
         i = 0
         for i in range(len(listPopu)):
             globalFitness += listPopu[i].fitness
-        return globalFitness
+        return round(globalFitness)
 
     #Selección de individuos para el crossover
     #Se utiliza el metodo de la ruleta
-    def selection(self, selecSize):
-        popu = self.characteres.copy();
+    def selection(self):
+        popu = copy.deepcopy(self.characteres)
         selectedPopu = []
         i = 0
-        for i in range(selecSize):
+        for i in range(4):
             aux = random.randint(0, self.totalFit(popu))
             random.shuffle(popu)
             sumDec = 0
+            cont = 0
             for character in popu:
                 sumDec += character.getFitness()
                 if sumDec >= aux :
+                    cont += 1
                     selectedPopu.append(character)
                     popu.remove(character)
                     break;
@@ -110,27 +112,30 @@ class Genetic:
 
     #Crossover
     #Metodo de un solo puntu
-    def crossover(self, reproduc):
+    def crossOver(self, reproduc):
         parents = copy.deepcopy(self.characteres)
         random.shuffle(parents)
         for i in range(reproduc):
-            parent1 = parents[random.randint(0, len(parents))].getDNA()
-            parent2 = parents[random.randint(0, len(parents))]
-            son1 = Character(len(self.characteres) + 1)
-            son2 = Character(len(self.characteres) + 1)
+            parent1 = parents[random.randint(0, len(parents)-1)].getDNA()
+            parent2 = parents[random.randint(0, len(parents)-1)].getDNA()
+            son1 = Character(len(self.characteres)+1)
+            son2 = Character(len(self.characteres)+1)
             point = random.randint(0, 2)
             if point == 1:
                 son1.setDNA([parent1[0], parent2[1], parent2[2], parent2[3]])
                 son2.setDNA([parent2[0], parent2[1], parent1[2], parent2[3]])
-                self.characteres.append(son1, son2)
+                self.characteres.append(son1)
+                self.characteres.append(son2)
             if point == 2:
                 son1.setDNA([parent1[0], parent1[1], parent2[2], parent2[3]])
                 son2.setDNA([parent2[0], parent2[1], parent1[2], parent1[3]])
-                self.characteres.append(son1, son2)
+                self.characteres.append(son1)
+                self.characteres.append(son2)
             else:
-                son1.setDNA(parent1.getDNA())
-                son2.setDNA(parent2.getDNA())
-                self.characteres.append(son1, son2)
+                son1.setDNA(parent1)
+                son2.setDNA(parent2)
+                self.characteres.append(son1)
+                self.characteres.append(son2)
 
     #Mutation
     def mutation(self, probMuta):

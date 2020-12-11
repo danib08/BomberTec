@@ -5,9 +5,9 @@ class Character(object):
     def __init__(self, id):
         self.id = id
         self.DNA = [0, 0, 0, 0]
-        self.bombsRecord = [7, 8, 9, 2 ]
-        self.enemiesRecord = [1, 0, 1, 1]
-        self.blockRecord = [0, 1, 0, 0]
+        self.bombsRecord = []
+        self.enemiesRecord = []
+        self.blockRecord = []
         self.fitness = 0
 
     #Getters
