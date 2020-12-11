@@ -133,8 +133,8 @@ class Bomb(pg.sprite.Sprite):
         super().__init__()
         self.screenW = screenWidth
         self.screenH = screenHeight
-        self.image = pg.Surface((40, 40))
-        self.image.fill((255, 25, 25))
+        self.image = pg.image.load("Resources/Bomb.png").convert_alpha()
+        self.image = pg.transform.scale(self.image, (40,40))
         self.rect = self.image.get_rect()
         self.time = 3000
 
@@ -268,17 +268,28 @@ class PowerUp(pg.sprite.Sprite):
         """
         super().__init__()
         self.type = typeP
-        self.image = pg.Surface((20, 20))
-        self.type = typeP
+        self.spriteSheet = pg.image.load("Resources/PowerUps.png").convert()
 
         if self.type == "life":
-            self.image.fill((255,102,229))
+            self.spriteSheet.set_clip(20, 80, 30, 29)
+            self.image = self.spriteSheet.subsurface(self.spriteSheet.get_clip()).convert()
+            self.image = pg.transform.scale(self.image, (30, 30))
+            self.image.set_colorkey((0, 0, 0))
         elif self.type == "shield":
-            self.image.fill((25, 64, 255))
+            self.spriteSheet.set_clip(115, 80, 29, 29)
+            self.image = self.spriteSheet.subsurface(self.spriteSheet.get_clip()).convert()
+            self.image = pg.transform.scale(self.image, (30, 30))
+            self.image.set_colorkey((0, 0, 0))
         elif self.type == "cross":
-            self.image.fill((255,140,25))
+            self.spriteSheet.set_clip(212, 80, 29, 29)
+            self.image = self.spriteSheet.subsurface(self.spriteSheet.get_clip()).convert()
+            self.image = pg.transform.scale(self.image, (30, 30))
+            self.image.set_colorkey((0, 0, 0))
         elif self.type == "shoe":
-            self.image.fill((102, 68, 0))
+            self.spriteSheet.set_clip(179, 80, 29, 29)
+            self.image = self.spriteSheet.subsurface(self.spriteSheet.get_clip()).convert()
+            self.image = pg.transform.scale(self.image, (30, 30))
+            self.image.set_colorkey((0, 0, 0))
 
         self.rect = self.image.get_rect()
         self.rect.center = (centerX, centerY)

@@ -18,7 +18,7 @@ class GameLoop:
         self.firstBuild = False
         self.gameMap = GameMap()
         self.statsScreen = StatsScreen(self.screen)
-        self.background = pg.image.load("Resources/Grass.png").convert()
+        self.background = pg.image.load("Resources/Grass.jpg").convert()
 
         self.allCharacters = pg.sprite.Group()  # TODO: add enemies to this sprite group
         self.allEnemies = pg.sprite.Group() # TODO: add enemies to this sprite group
