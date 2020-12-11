@@ -37,6 +37,7 @@ class GameLoop:
             self.firstBuild = True
 
         self.screen.blit(self.background, (0,0))
+        self.gameMap.drawMap(self.screen)
 
         keys = pg.key.get_pressed()
         self.player.update(keys, self.gameMap.walls, self.gameMap.fakeWalls, self.allPowerUps)
@@ -48,15 +49,16 @@ class GameLoop:
             for powerUp in pickedUp:
                 powerUp.assignPowerUp(character)
             if character.placedBomb:
-                if character.bomb.time > 0:
+                if character.bomb.time > 500:
                     character.bomb.update()
                     character.bomb.draw(self.screen)
-                if character.bomb.time == 0:
+                if 0 <= character.bomb.time <= 500:
                     character.placedBomb = False
-                    character.bomb.explode(self.gameMap.fakeWalls, self.allCharacters, self.gameMap.backMatrix, self.allPowerUps)
+                    character.bomb.explode(self.gameMap.fakeWalls, self.allCharacters, self.gameMap.backMatrix,
+                                           self.allPowerUps, character.cross)
+                    character.bomb.drawFlames(self.screen, character.cross)
                     character.bomb.resetTime()
 
-        self.gameMap.drawMap(self.screen)
         self.statsScreen.draw(self.player.lives, self.player.shield)
         self.allPowerUps.draw(self.screen)
 

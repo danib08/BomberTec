@@ -21,6 +21,7 @@ class Player(pg.sprite.Sprite):
 
         self.lives = 3
         self.shield = False
+        self.cross = False
         self.bomb = Bomb(screenHeight, screenHeight)  # Creates a bomb sprite
         self.placedBomb = False
 
@@ -92,22 +93,23 @@ class Enemy(pg.sprite.Sprite):
 
         self.lives = lives
         self.shield = False
+        self.cross = False
         self.speed = speed
         self.bomb = Bomb(screenHeight, screenHeight)  # Creates a bomb sprite
         self.placedBomb = False
 
     # TODO: update enemy movement, right/left/up/down += self.speed
-    # def update(self, blocks, fakeBlocks):
-    #
-    #     # Keep enemy on-screen
-    #     if self.rect.left < 0:
-    #         self.rect.left = 0
-    #     if self.rect.right > self.screenW:
-    #         self.rect.right = self.screenW
-    #     if self.rect.top <= 0:
-    #         self.rect.top = 0
-    #     if self.rect.bottom >= self.screenH:
-    #         self.rect.bottom = self.screenH
+    def update(self, blocks, fakeBlocks):
+
+        # Keep enemy on-screen
+        if self.rect.left < 0:
+            self.rect.left = 0
+        if self.rect.right > self.screenW:
+            self.rect.right = self.screenW
+        if self.rect.top <= 0:
+            self.rect.top = 0
+        if self.rect.bottom >= self.screenH:
+            self.rect.bottom = self.screenH
 
     def placeBomb(self):
         """
@@ -135,8 +137,17 @@ class Bomb(pg.sprite.Sprite):
         self.screenH = screenHeight
         self.image = pg.image.load("Resources/Bomb.png").convert_alpha()
         self.image = pg.transform.scale(self.image, (40,40))
+
+        self.fireImage = pg.image.load("Resources/Flame.png").convert_alpha()
+        self.fireImage = pg.transform.scale(self.fireImage, (40, 40))
+
         self.rect = self.image.get_rect()
         self.time = 3000
+
+        self.rectUp = None
+        self.rectDown = None
+        self.rectLeft = None
+        self.rectRight = None
 
     def setCoord(self, playerCenterX, playerCenterY):
         """
@@ -174,6 +185,12 @@ class Bomb(pg.sprite.Sprite):
 
         self.rect.topleft = (bombX, bombY)
 
+        # Sets coordinates of bomb collisions
+        self.rectUp = pg.Rect(self.rect.topleft[0], self.rect.topleft[1] - 40, 40, 40)
+        self.rectDown = pg.Rect(self.rect.bottomleft[0], self.rect.bottomleft[1], 40, 40)
+        self.rectLeft = pg.Rect(self.rect.topleft[0] - 40, self.rect.topleft[1], 40, 40)
+        self.rectRight = pg.Rect(self.rect.topright[0], self.rect.topright[1], 40, 40)
+
     def update(self):
         """
         Substracts from the "time" attribute, so the bomb is closer to explosion
@@ -196,26 +213,35 @@ class Bomb(pg.sprite.Sprite):
         """
         screen.blit(self.image, self.rect)
 
-    def explode(self, fakeBlocks, characters, mapMatrix, powerUps):
+    def drawFlames(self, screen, cross):
+        """
+        Draws the explosion flames on-screen
+        :param screen: The surface where the bomb will be drawn
+        :param cross: boolean that tells if bomb will explode in a cross form or not
+        :return: null
+        """
+        if not cross:
+            screen.blit(self.fireImage, self.rect)
+            screen.blit(self.fireImage, self.rectUp)
+            screen.blit(self.fireImage, self.rectDown)
+            screen.blit(self.fireImage, self.rectLeft)
+            screen.blit(self.fireImage, self.rectRight)
+
+    def explode(self, fakeBlocks, characters, mapMatrix, powerUps, cross):
         """
         Destroys the fake walls adjacent to the bomb and hits players
         :param fakeBlocks: list of all fake walls on the map
         :param characters: sprite group of all the characters on the game
         :param mapMatrix: the matrix that represents the game map
         :param powerUps: sprite group of all the power ups on the map
+        :param cross: boolean that tells if bomb will explode in a cross form or not
         :return: null
         """
 
-        # Rects for character and bomb collision
-        rectUp = pg.Rect(self.rect.topleft[0], self.rect.topleft[1] - 40, 40, 40)
-        rectDown = pg.Rect(self.rect.bottomleft[0], self.rect.bottomleft[1], 40, 40)
-        rectLeft = pg.Rect(self.rect.topleft[0] - 40, self.rect.topleft[1], 40, 40)
-        rectRight = pg.Rect(self.rect.topright[0], self.rect.topright[1], 40, 40)
-
         index = 0
         for rect in fakeBlocks:  # Destroy blocks and update map matrix
-            if rect.colliderect(rectUp) or rect.colliderect(rectDown) or rect.colliderect(rectLeft) or \
-                    rect.colliderect(rectRight):
+            if not cross and (rect.colliderect(self.rectUp) or rect.colliderect(self.rectDown) or
+                              rect.colliderect(self.rectLeft) or rect.colliderect(self.rectRight)):
                 mapMatrix[rect.i][rect.j] = 0
 
                 # Power-Up probability
@@ -240,8 +266,8 @@ class Bomb(pg.sprite.Sprite):
 
         index = 0
         for character in characters.sprites():  # Checks every character for bomb collision
-            if character.rect.colliderect(rectUp) or character.rect.colliderect(rectDown) or \
-                    character.rect.colliderect(rectLeft) or character.rect.colliderect(rectRight) or \
+            if character.rect.colliderect(self.rectUp) or character.rect.colliderect(self.rectDown) or \
+                    character.rect.colliderect(self.rectLeft) or character.rect.colliderect(self.rectRight) or \
                     character.rect.colliderect(self.rect):
                 if character.shield: # TODO: check if enemies shield works
                     character.shield = False
@@ -295,6 +321,11 @@ class PowerUp(pg.sprite.Sprite):
         self.rect.center = (centerX, centerY)
 
     def assignPowerUp(self, character):
+        """
+        Assigns the power up specific benefit to the character entered as a parameter
+        :param character: the character who will receive the power-up
+        :return: null
+        """
         # TODO: check if enemies power-ups work
         if self.type == "life":
             character.lives += 1
