@@ -18,11 +18,15 @@ class GameLoop:
         self.firstBuild = False
         self.gameMap = GameMap()
         self.statsScreen = StatsScreen(self.screen)
-        self.player = Player(displayWidth, displayHeight)
-        # TODO: create enemies
+        self.background = pg.image.load("Resources/Grass.jpg").convert()
 
         self.allCharacters = pg.sprite.Group()  # TODO: add enemies to this sprite group
+        self.allEnemies = pg.sprite.Group() # TODO: add enemies to this sprite group
         self.allBombs = pg.sprite.Group()
+        self.allPowerUps = pg.sprite.Group()
+
+        self.player = Player(displayWidth, displayHeight)
+        # TODO: create enemies
 
         self.allCharacters.add(self.player)
         self.allBombs.add(self.player.bomb)
@@ -32,24 +36,31 @@ class GameLoop:
             self.gameMap.run(self.screen)
             self.firstBuild = True
 
-        self.screen.fill((0, 153, 77))
+        self.screen.blit(self.background, (0,0))
+        self.gameMap.drawMap(self.screen)
 
         keys = pg.key.get_pressed()
-        self.player.update(keys, self.gameMap.walls, self.gameMap.fakeWalls)
+        self.player.update(keys, self.gameMap.walls, self.gameMap.fakeWalls, self.allPowerUps)
+        #TODO: self.allEnemies.update(self.gameMap.walls, self.gameMap.fakeWalls, self.allPowerUps)
         self.allCharacters.draw(self.screen)
 
         for character in self.allCharacters.sprites():
+            pickedUp = pg.sprite.spritecollide(character, self.allPowerUps, True)  # Picking up power-ups
+            for powerUp in pickedUp:
+                powerUp.assignPowerUp(character)
             if character.placedBomb:
-                if character.bomb.time > 0:
+                if character.bomb.time > 500:
                     character.bomb.update()
                     character.bomb.draw(self.screen)
-                if character.bomb.time == 0:
+                if 0 <= character.bomb.time <= 500:
                     character.placedBomb = False
-                    character.bomb.explode(self.gameMap.fakeWalls, self.allCharacters, self.gameMap.backMatrix)
+                    character.bomb.explode(self.gameMap.fakeWalls, self.allCharacters, self.gameMap.backMatrix,
+                                           self.allPowerUps, character.cross)
+                    character.bomb.drawFlames(self.screen, character.cross)
                     character.bomb.resetTime()
 
-        self.gameMap.drawMap(self.screen)
-        self.statsScreen.draw(self.player.lives)
+        self.statsScreen.draw(self.player.lives, self.player.shield)
+        self.allPowerUps.draw(self.screen)
 
         if self.player.lives == 0:
             return 1

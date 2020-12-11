@@ -38,12 +38,41 @@ class StatsScreen:
         """
         self.screen = screen
         self.surf = pg.Surface((200, 720))
-        self.surf.fill((157, 105, 163))
+        self.surf.fill((102, 51, 0))
 
-    def draw(self, playerLives):
+        # Setting the sprite sheet
+        self.spriteSheet = pg.image.load("Resources/PowerUps.png").convert()
+
+        # Life +1
+        self.spriteSheet.set_clip(20, 80, 30, 29)
+        self.lifeImage = self.spriteSheet.subsurface(self.spriteSheet.get_clip()).convert()
+        self.lifeImage = pg.transform.scale(self.lifeImage, (30, 30))
+        self.lifeImage.set_colorkey((0, 0, 0))
+
+        # Shield
+        self.spriteSheet.set_clip(115, 80, 29, 29)
+        self.shieldImage = self.spriteSheet.subsurface(self.spriteSheet.get_clip()).convert()
+        self.shieldImage = pg.transform.scale(self.shieldImage, (30, 30))
+        self.shieldImage.set_colorkey((0, 0, 0))
+
+        # Cross-Bomb
+        self.spriteSheet.set_clip(212, 80, 29, 29)
+        self.crossImage = self.spriteSheet.subsurface(self.spriteSheet.get_clip()).convert()
+        self.crossImage = pg.transform.scale(self.crossImage, (30, 30))
+        self.crossImage.set_colorkey((0, 0, 0))
+
+        # Kick
+        self.spriteSheet.set_clip(179, 80, 29, 29)
+        self.kickImage = self.spriteSheet.subsurface(self.spriteSheet.get_clip()).convert()
+        self.kickImage = pg.transform.scale(self.kickImage, (30, 30))
+        self.kickImage.set_colorkey((0, 0, 0))
+
+
+    def draw(self, playerLives, shield):
         """
         Draws all of the objects of the stats screen
         :param playerLives: the number of lives the player has
+        :param shield: boolean that states if the player has an active shield power-up
         :return: null
         """
         self.screen.blit(self.surf, (1280,0))
@@ -53,25 +82,26 @@ class StatsScreen:
         powerUpsText = Text(self.screen, "Power-Ups:", 1370, 200, (0, 0, 0), 25)
         powerUpsText.drawText()
 
-        pinkRect = pg.Rect(1300, 250, 30, 30)
-        blueRect = pg.Rect(1300, 300, 30, 30)
-        orangeRect = pg.Rect(1300, 350, 30, 30)
-        brownRect = pg.Rect(1300, 410, 30, 30)
-
-        pg.draw.rect(self.screen, (255,102,229), pinkRect)
-        pg.draw.rect(self.screen, (25,64,255), blueRect)
-        pg.draw.rect(self.screen, (255,140,25), orangeRect)
-        pg.draw.rect(self.screen, (102, 68, 0), brownRect)
+        self.screen.blit(self.lifeImage, (1300, 250))
+        self.screen.blit(self.shieldImage, (1300, 300))
+        self.screen.blit(self.crossImage, (1300, 350))
+        self.screen.blit(self.kickImage, (1300, 410))
 
         oneUpText = Text(self.screen, "Life +1", 1380, 267, (0, 0, 0), 25)
         oneUpText.drawText()
-        shieldText = Text(self.screen, "Shield: no", 1405, 316, (0, 0, 0), 25)
+
+        if shield:
+            shieldFill = "yes"
+        else:
+            shieldFill = "no"
+
+        shieldText = Text(self.screen, "Shield: %s" % shieldFill, 1405, 316, (0, 0, 0), 25)
         shieldText.drawText()
         crossText = Text(self.screen, "Cross-Bomb:", 1400, 365, (0, 0, 0), 21)
         crossText.drawText()
         crossActiveText = Text(self.screen, "No", 1390, 390, (0, 0, 0), 25)
         crossActiveText.drawText()
-        crossText = Text(self.screen, "Shoe: no", 1390, 428, (0, 0, 0), 25)
+        crossText = Text(self.screen, "Kick: no", 1390, 428, (0, 0, 0), 25)
         crossText.drawText()
 
 class GameOver:
