@@ -2,6 +2,9 @@ import pygame as pg
 from Map.GameMap import GameMap
 from Game.Screens import StatsScreen
 from Game.Sprites import Player
+from Game.Sprites import Enemy
+from GeneticAlgorithm.Genetic import Genetic
+import random
 
 class GameLoop:
     """
@@ -19,17 +22,29 @@ class GameLoop:
         self.gameMap = GameMap()
         self.statsScreen = StatsScreen(self.screen)
         self.background = pg.image.load("Resources/Grass.jpg").convert()
+        self.counter = 0
+        self.nFrames = 700
+        self.mFrames = 300
 
-        self.allCharacters = pg.sprite.Group()  # TODO: add enemies to this sprite group
-        self.allEnemies = pg.sprite.Group() # TODO: add enemies to this sprite group
+        self.allCharacters = pg.sprite.Group()
+        self.allEnemies = pg.sprite.Group()
         self.allBombs = pg.sprite.Group()
         self.allPowerUps = pg.sprite.Group()
 
         self.player = Player(displayWidth, displayHeight)
-        # TODO: create enemies
 
         self.allCharacters.add(self.player)
         self.allBombs.add(self.player.bomb)
+
+        self.genetic = Genetic([], 7)  # Genetic algorithm
+        self.genetic.generateFP()
+
+        for character in self.genetic.characteres:
+            lives = random.randint(2, 4)
+            speed = random.randint(4, 6)
+            enemy = Enemy(displayWidth, displayHeight, lives, speed, character.id)  # TODO: add DNA probabilities
+            self.allEnemies.add(enemy)
+            self.allCharacters.add(enemy)
 
     def run(self):
         if not self.firstBuild:  # Initializes the map and draws it
@@ -61,6 +76,17 @@ class GameLoop:
 
         self.statsScreen.draw(self.player.lives, self.player.shield)
         self.allPowerUps.draw(self.screen)
+
+        self.counter += 1
+
+        if self.counter == self.mFrames:
+            #TODO for enemy in allEnemies, .doAction()
+            pass
+
+        elif self.counter == self.nFrames:
+            #TODO genetic again
+            self.counter = 0
+            pass
 
         if self.player.lives == 0:
             return 1

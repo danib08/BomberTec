@@ -76,7 +76,7 @@ class Enemy(pg.sprite.Sprite):
     Extends from the pygame Sprite class.
     """
 
-    def __init__(self, screenWidth, screenHeight, lives, speed):
+    def __init__(self, screenWidth, screenHeight, lives, speed, id):
         """
         Constructor for the player.
         :param screenWidth: The screen width that will be the player's x coordinate limit
@@ -95,11 +95,14 @@ class Enemy(pg.sprite.Sprite):
         self.shield = False
         self.cross = False
         self.speed = speed
+        self.id = id
+        self.evade = random.randint(7,9)
+        # TODO: add attributes and parameters for DNA probabilities
         self.bomb = Bomb(screenHeight, screenHeight)  # Creates a bomb sprite
         self.placedBomb = False
 
-    # TODO: update enemy movement, right/left/up/down += self.speed
     def update(self, blocks, fakeBlocks):
+        # TODO: update enemy movement, right/left/up/down += self.speed
 
         # Keep enemy on-screen
         if self.rect.left < 0:
@@ -119,6 +122,12 @@ class Enemy(pg.sprite.Sprite):
         self.bomb.setCoord(self.rect.centerx, self.rect.centery)
         self.bomb.resetTime()
         self.placedBomb = True
+
+    def doAction(self):
+        # TODO: choose action from dna probs
+        # if place bomb -> self.placeBomb() and get away
+        # if hide, powerup, enemy -> A* -> move algorithm
+        pass
 
 
 class Bomb(pg.sprite.Sprite):

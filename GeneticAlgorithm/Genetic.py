@@ -24,12 +24,10 @@ class Genetic:
                 n = 100 - aux
                 listElements[random.randint(0, 3)] += n
 
-    #Genera la poblaciion inicial
+    #Genera la poblacion inicial
     def generateFP(self):
-        i = 0
         for i in range(self.nPopulation):
             nCharacter = Character(i+1)
-            j = 0
             prob = 100
             for j in range(len(nCharacter.DNA)):
                 aux = random.randint(0, prob)
@@ -39,7 +37,6 @@ class Genetic:
                     Genetic.sumList(self, nCharacter.DNA)
             random.shuffle(nCharacter.DNA)
             self.characteres.append(nCharacter)
-
 
     #Función Fitness
 
@@ -72,7 +69,6 @@ class Genetic:
 
     #Suma de todos los parametros para el fitness
     def fitness(self):
-        i = 0
         for i in range (len(self.characteres)):
             fit = self.f1(self.characteres[i].bombsRecord)\
                   + self.f2(self.characteres[i].enemiesRecord)\
