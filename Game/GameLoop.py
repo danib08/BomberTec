@@ -4,7 +4,6 @@ from Game.Screens import StatsScreen
 from Game.Sprites import Player
 from Game.Sprites import Enemy
 from GeneticAlgorithm.Genetic import Genetic
-import random
 
 class GameLoop:
     """
@@ -18,11 +17,13 @@ class GameLoop:
         :param displayHeight: height of the screen
         """
         self.screen = screen
+        self.width = displayWidth
+        self.height = displayHeight
         self.firstBuild = False
         self.gameMap = GameMap()
         self.statsScreen = StatsScreen(self.screen)
         self.background = pg.image.load("Resources/Grass.jpg").convert()
-        self.counter = 0
+        self.counter = 0  # counter for the genetic algorithm frames
         self.nFrames = 700
         self.mFrames = 300
 
@@ -39,16 +40,23 @@ class GameLoop:
         self.genetic = Genetic([], 7)  # Genetic algorithm
         self.genetic.generateFP()
 
-        for character in self.genetic.characteres:
-            lives = random.randint(2, 4)
-            speed = random.randint(4, 6)
-            enemy = Enemy(displayWidth, displayHeight, lives, speed, character.id)  # TODO: add DNA probabilities
-            self.allEnemies.add(enemy)
-            self.allCharacters.add(enemy)
+        self.enemyPositions = [(17,0), (0,31), (17,31), (9,0), (0,16), (17,16), (9,17)]
+        self.enemyCoordinates = []
 
     def run(self):
         if not self.firstBuild:  # Initializes the map and draws it
             self.gameMap.run(self.screen)
+
+            count = 0
+            for rect in self.gameMap.allWalls:
+                for pos in self.enemyPositions:
+                    if rect.i == pos[0] and rect.j == pos[1]:
+                        enemy = Enemy(self.width, self.height, self.genetic.characteres[count].id,
+                                      self.genetic.characteres[count].DNA)
+                        enemy.rect.center = rect.center
+                        self.allEnemies.add(enemy)
+                        self.allCharacters.add(enemy)
+                        count += 1
             self.firstBuild = True
 
         self.screen.blit(self.background, (0,0))
@@ -77,16 +85,17 @@ class GameLoop:
         self.statsScreen.draw(self.player.lives, self.player.shield)
         self.allPowerUps.draw(self.screen)
 
-        self.counter += 1
-
         if self.counter == self.mFrames:
-            #TODO for enemy in allEnemies, .doAction()
-            pass
+            for enemy in self.allEnemies:
+                enemy.doAction()
 
         elif self.counter == self.nFrames:
             #TODO genetic again
             self.counter = 0
             pass
+
+        self.counter += 1
+
 
         if self.player.lives == 0:
             return 1

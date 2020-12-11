@@ -8,13 +8,13 @@ class Genetic:
         self.characteres = characteres #lista de individuos
         self.nPopulation = nPopulation #Cantidad de idividuos que quiero
 
-    #Obtiene la lista de individuos
-    def getCharacteres(self):
-        return self.characteres
-
-    #Setea la lista de individuos
-    def setCharacteres(self, newCharacteres):
-        self.characteres = newCharacteres
+    # #Obtiene la lista de individuos
+    # def getCharacteres(self):
+    #     return self.characteres
+    #
+    # #Setea la lista de individuos
+    # def setCharacteres(self, newCharacteres):
+    #     self.characteres = newCharacteres
 
     #Verifica que la suma de las probabilidades sea 100
     def sumList(self, listElements):
