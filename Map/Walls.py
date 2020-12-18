@@ -1,6 +1,6 @@
 import pygame as pg
 
-class FakeWall(pg.Rect):
+class Wall(pg.Rect):
     """
     Class that represents a wall
     Extends from the pygame Rect class.
@@ -14,7 +14,6 @@ class FakeWall(pg.Rect):
         :param height: rectangle height
         :param i: map matrix i position
         :param j: map matrix j position
-
         """
         super().__init__(left, top, width, height)
         self.i = i

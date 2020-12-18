@@ -27,11 +27,11 @@ class AStar:
     """
     def __init__(self):
         """
-        constructor method
+        Constructor method
         """
-    def astar(self, maze, start, end):
+    def getPath(self, maze, start, end):
         """
-        Method that do the A Star Algorithm
+        Method that does the A Star Algorithm
         :param maze: map template
         :param start: start coordinates into matrix
         :param end: end coordinates into the matrix
@@ -59,7 +59,8 @@ class AStar:
                 while current is not None:
                     path.append(current.position)
                     current = current.parent
-                return path[::-1]
+                path = path[::-1]
+                return path[1:]
             children = []
             for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)]:
                 node_position = (current_node.position[0] + new_position[0], current_node.position[1] + new_position[1])

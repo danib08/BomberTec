@@ -148,7 +148,6 @@ class CreateMap:
         self.setPlayer(17, 16, self.grid)
         self.setPlayer(9, 17, self.grid)
         self.setNonDestructibleItems(self.grid, round((20 ** 2) / 2))
-        #self.print_grid()
         return self.grid
 
     def print_grid(self):
