@@ -78,7 +78,7 @@ class GameLoop:
                 if 0 <= character.bomb.time <= 500:
                     character.placedBomb = False
                     character.bomb.explode(self.gameMap.fakeWalls, self.allCharacters, self.gameMap.backMatrix,
-                                           self.allPowerUps, character.cross)
+                                           self.allPowerUps, character)
                     character.bomb.drawFlames(self.screen, character.cross)
                     character.bomb.resetTime()
 
@@ -90,9 +90,38 @@ class GameLoop:
                 enemy.doAction(self.gameMap.allWalls, self.gameMap.mapMatrix)
 
         elif self.counter == self.nFrames:
-            #TODO genetic again
+            self.genetic.characteres[0].blockRecord = self.allEnemies.sprites()[0].blockRecord
+            self.genetic.characteres[0].enemiesRecord = self.allEnemies.sprites()[0].enemiesRecord
+            self.genetic.characteres[1].blockRecord = self.allEnemies.sprites()[1].blockRecord
+            self.genetic.characteres[1].enemiesRecord = self.allEnemies.sprites()[1].enemiesRecord
+            self.genetic.characteres[2].blockRecord = self.allEnemies.sprites()[2].blockRecord
+            self.genetic.characteres[2].enemiesRecord = self.allEnemies.sprites()[2].enemiesRecord
+            self.genetic.characteres[3].blockRecord = self.allEnemies.sprites()[3].blockRecord
+            self.genetic.characteres[3].enemiesRecord = self.allEnemies.sprites()[3].enemiesRecord
+            self.genetic.characteres[4].blockRecord = self.allEnemies.sprites()[4].blockRecord
+            self.genetic.characteres[4].enemiesRecord = self.allEnemies.sprites()[4].enemiesRecord
+            self.genetic.characteres[5].blockRecord = self.allEnemies.sprites()[5].blockRecord
+            self.genetic.characteres[5].enemiesRecord = self.allEnemies.sprites()[5].enemiesRecord
+            self.genetic.characteres[6].blockRecord = self.allEnemies.sprites()[6].blockRecord
+            self.genetic.characteres[6].enemiesRecord = self.allEnemies.sprites()[6].enemiesRecord
+
+            self.genetic.fitness()
+            self.genetic.selection()
+            self.genetic.crossOver(4)
+            self.genetic.mutation(40)
+
+            self.genetic.characteres[0].DNA = self.allEnemies.sprites()[0].DNA
+            self.genetic.characteres[1].DNA = self.allEnemies.sprites()[1].DNA
+            self.genetic.characteres[2].DNA = self.allEnemies.sprites()[2].DNA
+            self.genetic.characteres[3].DNA = self.allEnemies.sprites()[3].DNA
+            self.genetic.characteres[4].DNA = self.allEnemies.sprites()[4].DNA
+            self.genetic.characteres[5].DNA = self.allEnemies.sprites()[5].DNA
+            self.genetic.characteres[6].DNA = self.allEnemies.sprites()[6].DNA
+
+            for enemy in self.allEnemies.sprites():
+                enemy.setProb()
+
             self.counter = 0
-            pass
 
         self.counter += 1
 

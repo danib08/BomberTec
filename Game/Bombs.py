@@ -107,21 +107,23 @@ class Bomb(pg.sprite.Sprite):
             screen.blit(self.fireImage, self.rectLeft)
             screen.blit(self.fireImage, self.rectRight)
 
-    def explode(self, fakeBlocks, characters, mapMatrix, powerUps, cross):
+    def explode(self, fakeBlocks, characters, mapMatrix, powerUps, player):
         """
         Destroys the fake walls adjacent to the bomb and hits players
         :param fakeBlocks: list of all fake walls on the map
         :param characters: sprite group of all the characters on the game
         :param mapMatrix: the matrix that represents the game map
         :param powerUps: sprite group of all the power ups on the map
-        :param cross: boolean that tells if bomb will explode in a cross form or not
+        ::param player: player that owns the bomb
         :return: null
         """
 
         index = 0
+        hitBlocks = False
         for rect in fakeBlocks:  # Destroy blocks and update map matrix
-            if not cross and (rect.colliderect(self.rectUp) or rect.colliderect(self.rectDown) or
+            if not player.cross and (rect.colliderect(self.rectUp) or rect.colliderect(self.rectDown) or
                               rect.colliderect(self.rectLeft) or rect.colliderect(self.rectRight)):
+                hitBlocks = True
                 mapMatrix[rect.i][rect.j] = 0
 
                 # Power-Up probability
@@ -145,11 +147,13 @@ class Bomb(pg.sprite.Sprite):
             index += 1
 
         index = 0
+        hitPlayer = False
         for character in characters.sprites():  # Checks every character for bomb collision
             if character.rect.colliderect(self.rectUp) or character.rect.colliderect(self.rectDown) or \
                     character.rect.colliderect(self.rectLeft) or character.rect.colliderect(self.rectRight) or \
                     character.rect.colliderect(self.rect):
-                if character.shield: # TODO: check if enemies shield works
+                hitPlayer = True
+                if character.shield:
                     character.shield = False
                 else:
                     character.lives -= 1
@@ -158,6 +162,16 @@ class Bomb(pg.sprite.Sprite):
                     character.bomb.kill()
                     character.kill()
             index += 1
+
+        if not player.isPlayer:
+            if hitBlocks:
+                player.blockRecord.append(1)
+            else:
+                player.blockRecord.append(0)
+            if hitPlayer:
+                player.enemiesRecord.append(1)
+            else:
+                player.enemiesRecord.append(0)
 
 class PowerUp(pg.sprite.Sprite):
     """

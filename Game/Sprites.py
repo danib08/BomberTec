@@ -26,6 +26,7 @@ class Player(pg.sprite.Sprite):
         self.cross = False
         self.bomb = Bomb(screenHeight, screenHeight)  # Creates a bomb sprite
         self.placedBomb = False
+        self.isPlayer = True
 
     def update(self, keys, blocks, fakeBlocks, powerUps):
         """
@@ -107,16 +108,25 @@ class Enemy(pg.sprite.Sprite):
         self.powerProb = self.DNA[1]
         self.enemyProb = self.DNA[2]
         self.bombProb = self.DNA[3]
-        self.inAction = False
+        self.enemiesRecord = []
+        self.blockRecord = []
 
+        self.inAction = False
         self.aStar = AStar()
         self.path = []  # Path the enemy is following
         self.nextNode = (0,0)
         self.nextRect = None
         self.i = 0
         self.j = 0
+        self.isPlayer = False
 
+    def setProb(self):
+        self.hideProb = self.DNA[0]
+        self.powerProb = self.DNA[1]
+        self.enemyProb = self.DNA[2]
+        self.bombProb = self.DNA[3]
 
+    #TODO document
     def update(self, blocks, fakeBlocks, powerUps, allWalls):
         if len(self.path) == 0: #TODO: check when arrived
             self.inAction = False
@@ -172,19 +182,15 @@ class Enemy(pg.sprite.Sprite):
 
             action = random.choices(self.DNA, weights=(self.DNA[0], self.DNA[1], self.DNA[2], self.DNA[3]), k=1)
             if action[0] == self.hideProb:
-                print("hide")
                 #TODO: A*
                 pass
             elif action[0] == self.powerProb:
-                print("powerup")
                 #TODO: A*
                 pass
             elif action[0] == self.enemyProb:
-                print("enemy")
                 #TODO: A*
                 pass
             elif action[0] == self.bombProb:
-                print("bomb")
                 self.placeBomb()
                 self.runAway(mapMatrix, allWalls)
                 pass

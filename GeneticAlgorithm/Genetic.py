@@ -51,7 +51,6 @@ class Genetic:
             for i in range(len(bombsR)):
                 value = value + bombsR[i]
             f = 1/(value/sum(bombsR))
-            print(f)
             return f
 
     #Calcula segundo y tercer parametro para el fitness
@@ -65,14 +64,13 @@ class Genetic:
             for i in range(len(enemiesR)):
                 value = value + enemiesR[i]
             f = value/len(enemiesR)
-            print(f)
             return f
 
     #Suma de todos los parametros para el fitness
     def fitness(self):
         for i in range (len(self.characteres)):
-            fit = (self.f1(self.characteres[i].bombsRecord)\
-                  + self.f2(self.characteres[i].enemiesRecord)\
+            fit = (self.f1(self.characteres[i].bombsRecord)
+                  + self.f2(self.characteres[i].enemiesRecord)
                   + self.f2(self.characteres[i].blockRecord))*10
             self.characteres[i].setFitness(fit)
 
@@ -98,7 +96,7 @@ class Genetic:
             sumDec = 0
             cont = 0
             for character in popu:
-                sumDec += character.getFitness()
+                sumDec += character.fitness
                 if sumDec >= aux :
                     cont += 1
                     selectedPopu.append(character)
@@ -113,24 +111,24 @@ class Genetic:
         parents = copy.deepcopy(self.characteres)
         random.shuffle(parents)
         for i in range(reproduc):
-            parent1 = parents[random.randint(0, len(parents)-1)].getDNA()
-            parent2 = parents[random.randint(0, len(parents)-1)].getDNA()
+            parent1 = parents[random.randint(0, len(parents)-1)].DNA
+            parent2 = parents[random.randint(0, len(parents)-1)].DNA
             son1 = Character(len(self.characteres)+1)
             son2 = Character(len(self.characteres)+1)
             point = random.randint(0, 2)
             if point == 1:
-                son1.setDNA([parent1[0], parent2[1], parent2[2], parent2[3]])
-                son2.setDNA([parent2[0], parent2[1], parent1[2], parent2[3]])
+                son1.DNA = [parent1[0], parent2[1], parent2[2], parent2[3]]
+                son2.DNA = [parent2[0], parent2[1], parent1[2], parent2[3]]
                 self.characteres.append(son1)
                 self.characteres.append(son2)
             if point == 2:
-                son1.setDNA([parent1[0], parent1[1], parent2[2], parent2[3]])
-                son2.setDNA([parent2[0], parent2[1], parent1[2], parent1[3]])
+                son1.DNA = [parent1[0], parent2[1], parent2[2], parent2[3]]
+                son2.DNA = [parent2[0], parent2[1], parent1[2], parent2[3]]
                 self.characteres.append(son1)
                 self.characteres.append(son2)
             else:
-                son1.setDNA(parent1)
-                son2.setDNA(parent2)
+                son1.DNA = parent1
+                son2.DNA = parent2
                 self.characteres.append(son1)
                 self.characteres.append(son2)
 
