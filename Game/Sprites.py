@@ -27,7 +27,6 @@ class Player(pg.sprite.Sprite):
         self.bomb = Bomb(screenHeight, screenHeight)  # Creates a bomb sprite
         self.placedBomb = False
 
-
     def update(self, keys, blocks, fakeBlocks, powerUps):
         """
         Updates the player according to the keys pressed and detected collisions.
@@ -97,7 +96,7 @@ class Enemy(pg.sprite.Sprite):
         self.lives = random.randint(2, 4)
         self.shield = False
         self.cross = False
-        self.speed = random.randint(4, 6)
+        self.speed = random.randint(0, 2)
         self.evade = random.randint(7,9)
         self.bomb = Bomb(screenHeight, screenHeight)  # Creates a bomb sprite
         self.placedBomb = False
@@ -112,14 +111,36 @@ class Enemy(pg.sprite.Sprite):
 
         self.aStar = AStar()
         self.path = []  # Path the enemy is following
+        self.nextNode = (0,0)
+        self.nextRect = None
+        self.i = 0
+        self.j = 0
 
 
-    def update(self, blocks, fakeBlocks, powerUps):
-        # TODO: update enemy movement, right/left/up/down += self.speed
-        if len(self.path) == 0:
+    def update(self, blocks, fakeBlocks, powerUps, allWalls):
+        if len(self.path) == 0: #TODO: check when arrived
             self.inAction = False
-        # else:
+        else:
+            if self.i < self.nextNode[0]:
+                self.rect.centery += self.speed
+            else:
+                self.rect.centery -= self.speed
+            if self.j < self.nextNode[1]:
+                self.rect.centerx += self.speed
+            else:
+                self.rect.centerx -= self.speed
 
+            if self.nextRect.centerx - 2 <= self.rect.centerx <= self.nextRect.centerx + 2 and \
+                    self.nextRect.centery - 2 <= self.rect.centery <= self.nextRect.centery + 2:
+                self.path.pop(0)
+                if len(self.path) == 0:
+                    self.inAction = False
+                else:
+                    self.nextNode = self.path[0]
+                    for rect in allWalls:
+                        if rect.i == self.nextNode[0] and rect.j == self.nextNode[1]:
+                            self.nextRect = rect
+                            break
 
         # Keep enemy on-screen
         if self.rect.left < 0:
@@ -143,33 +164,36 @@ class Enemy(pg.sprite.Sprite):
     #TODO: document
     def doAction(self, allWalls, mapMatrix):
         if not self.inAction:
-            i = 0
-            j = 0
             for rect in allWalls:
                 if rect.colliderect(self.rect):
-                    i = rect.i
-                    j = rect.j
+                    self.i = rect.i
+                    self.j = rect.j
+                    break
+
             action = random.choices(self.DNA, weights=(self.DNA[0], self.DNA[1], self.DNA[2], self.DNA[3]), k=1)
             if action[0] == self.hideProb:
-                # print("hide")
+                print("hide")
                 #TODO: A*
                 pass
             elif action[0] == self.powerProb:
-                # print("pow")
+                print("powerup")
                 #TODO: A*
                 pass
             elif action[0] == self.enemyProb:
-                # print("enemy")
+                print("enemy")
                 #TODO: A*
                 pass
             elif action[0] == self.bombProb:
+                print("bomb")
                 self.placeBomb()
-                self.runAway(i, j, mapMatrix)
+                self.runAway(mapMatrix, allWalls)
                 pass
             self.inAction = True
 
     #TODO: document
-    def runAway(self, i, j, mapMatrix):
+    def runAway(self, mapMatrix, allWalls):
+        i = self.i
+        j = self.j
         onLeftBorder = False
         onTopBorder = False
         onRightBorder = False
@@ -237,6 +261,11 @@ class Enemy(pg.sprite.Sprite):
 
         if moveFlag:
             self.path = self.aStar.getPath(mapMatrix, start, end)
-            print(self.path)
+            self.nextNode = self.path[0]
+
+            for rect in allWalls:
+                if rect.i == self.nextNode[0] and rect.j == self.nextNode[1]:
+                    self.nextRect = rect
+                    break
         else:
             self.inAction = False

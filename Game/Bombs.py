@@ -157,7 +157,6 @@ class Bomb(pg.sprite.Sprite):
                 if character.lives == 0:
                     character.bomb.kill()
                     character.kill()
-                    # TODO: check if enemies are removed when dead
             index += 1
 
 class PowerUp(pg.sprite.Sprite):

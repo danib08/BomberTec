@@ -64,7 +64,7 @@ class GameLoop:
 
         keys = pg.key.get_pressed()
         self.player.update(keys, self.gameMap.walls, self.gameMap.fakeWalls, self.allPowerUps)
-        self.allEnemies.update(self.gameMap.walls, self.gameMap.fakeWalls, self.allPowerUps)
+        self.allEnemies.update(self.gameMap.walls, self.gameMap.fakeWalls, self.allPowerUps, self.gameMap.allWalls)
         self.allCharacters.draw(self.screen)
 
         for character in self.allCharacters.sprites():
@@ -85,7 +85,7 @@ class GameLoop:
         self.statsScreen.draw(self.player.lives, self.player.shield)
         self.allPowerUps.draw(self.screen)
 
-        if self.counter == self.mFrames or self.firstBuild:
+        if self.counter == self.mFrames or (self.firstBuild and self.counter == 5):
             for enemy in self.allEnemies:
                 enemy.doAction(self.gameMap.allWalls, self.gameMap.mapMatrix)
 

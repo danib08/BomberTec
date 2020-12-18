@@ -1,6 +1,5 @@
 import random
 import pygame
-from Map import AStarAlgorithm
 from Backtracking import CreateMap
 from Map.Walls import Wall
 
@@ -151,11 +150,11 @@ class GameMap:
     def adaptiveMatrix(self, map):
         newMatrix = []
         row = []
-        for i in range(0, 17):
-            for j in range(0, 31):
-                if map[i][j] == "0" or map[i][j] == "2":
+        for i in range(0, 18):
+            for j in range(0, 32):
+                if map[i][j] == "0":
                     row.append(0)
-                elif map[i][j] == "1":
+                elif map[i][j] == "1" or map[i][j] == "2":
                     row.append(1)
                 else:
                     row.append(0)
@@ -167,7 +166,6 @@ class GameMap:
         """
         Method that start the map on screen
         :param surface: window
-
         """
         my_map = CreateMap.CreateMap()
         self.backMatrix = my_map.create_grid()
