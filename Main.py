@@ -45,10 +45,14 @@ while running:
 
     elif gameFlag:
         game = gameLoop.run()
-        if game == 1:
+        if game == 1 or game == 2:
             gameFlag = False
-            overFlag = True
+            if game == 2:
+                gameOver.text = "You won"
+            else:
+                gameOver.text = "You lost"
             gameOver.clicked = False
+            overFlag = True
 
     elif overFlag:
         gameOver.draw()

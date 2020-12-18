@@ -16,6 +16,7 @@ class GameMap:
         self.allWalls = []
         self.backMatrix = []
         self.mapMatrix = []
+        self.freeBlocks = []
         self.wallImage = pygame.image.load("Resources/SolidBlock.png").convert()
         self.wallImage = pygame.transform.scale(self.wallImage, (40, 40))
 
@@ -64,6 +65,17 @@ class GameMap:
             x = 0
             y += 40
 
+    # def makeFreeBlocks(self, backMatrix):
+    #     x = 0
+    #     y = 0
+    #     for i in range(len(backMatrix)):
+    #         for j in range(len(backMatrix[0])):
+    #             if backMatrix[i][j] != "2" or :
+    #                 self.fakeWalls.append(Wall(x, y, 40, 40, i, j))
+    #
+    #             x += 40
+    #         x = 0
+    #         y += 40
 
     def buildAllWalls(self, new_map):
         """

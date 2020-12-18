@@ -24,17 +24,17 @@ class Player(pg.sprite.Sprite):
         self.lives = 3
         self.shield = False
         self.cross = False
-        self.bomb = Bomb(screenHeight, screenHeight)  # Creates a bomb sprite
+        self.id = 10
+        self.bomb = Bomb(screenHeight, screenHeight, 10, self)  # Creates a bomb sprite
         self.placedBomb = False
         self.isPlayer = True
 
-    def update(self, keys, blocks, fakeBlocks, powerUps):
+    def update(self, keys, blocks, fakeBlocks):
         """
         Updates the player according to the keys pressed and detected collisions.
         :param keys: A list of all the keys pressed per frame
         :param blocks: A list of pygame Rects that represent walls
         :param fakeBlocks: A list of pygame Rects that represent fake walls
-        :param powerUps: List of powerUps on the map
         :return: null
         """
         if keys[pg.K_w]:
@@ -99,7 +99,7 @@ class Enemy(pg.sprite.Sprite):
         self.cross = False
         self.speed = random.randint(0, 2)
         self.evade = random.randint(7,9)
-        self.bomb = Bomb(screenHeight, screenHeight)  # Creates a bomb sprite
+        self.bomb = Bomb(screenHeight, screenHeight, charId, self)  # Creates a bomb sprite
         self.placedBomb = False
 
         self.id = charId
@@ -126,22 +126,27 @@ class Enemy(pg.sprite.Sprite):
         self.enemyProb = self.DNA[2]
         self.bombProb = self.DNA[3]
 
-    #TODO document
-    def update(self, blocks, fakeBlocks, powerUps, allWalls):
-        if len(self.path) == 0: #TODO: check when arrived
+    def update(self, allWalls):
+        """
+        Moves the character
+        :param allWalls: all of the walls on the game
+        :return: null
+        """
+        pass
+        if len(self.path) == 0:
             self.inAction = False
         else:
             if self.i < self.nextNode[0]:
                 self.rect.centery += self.speed
-            else:
+            elif self.i > self.nextNode[0]:
                 self.rect.centery -= self.speed
             if self.j < self.nextNode[1]:
                 self.rect.centerx += self.speed
-            else:
+            elif self.j > self.nextNode[1]:
                 self.rect.centerx -= self.speed
 
-            if self.nextRect.centerx - 2 <= self.rect.centerx <= self.nextRect.centerx + 2 and \
-                    self.nextRect.centery - 2 <= self.rect.centery <= self.nextRect.centery + 2:
+            if self.nextRect.centerx - 3 <= self.rect.centerx <= self.nextRect.centerx + 3 and \
+                    self.nextRect.centery - 3 <= self.rect.centery <= self.nextRect.centery + 3:
                 self.path.pop(0)
                 if len(self.path) == 0:
                     self.inAction = False
@@ -162,17 +167,14 @@ class Enemy(pg.sprite.Sprite):
         if self.rect.bottom >= self.screenH:
             self.rect.bottom = self.screenH
 
-    def placeBomb(self):
+    def doAction(self, allWalls, powerUps, mapMatrix):
         """
-        Places a bomb on the screen
+        Triggers an action of the enemy
+        :param allWalls: list of all walls on the map
+        :param powerUps: list of power up sprites
+        :param mapMatrix: matrix that represents the game map
         :return: null
         """
-        self.bomb.setCoord(self.rect.centerx, self.rect.centery)
-        self.bomb.resetTime()
-        self.placedBomb = True
-
-    #TODO: document
-    def doAction(self, allWalls, mapMatrix):
         if not self.inAction:
             for rect in allWalls:
                 if rect.colliderect(self.rect):
@@ -185,93 +187,39 @@ class Enemy(pg.sprite.Sprite):
                 #TODO: A*
                 pass
             elif action[0] == self.powerProb:
-                #TODO: A*
+                self.searchPowerUp(powerUps, allWalls, mapMatrix)
                 pass
             elif action[0] == self.enemyProb:
                 #TODO: A*
                 pass
             elif action[0] == self.bombProb:
                 self.placeBomb()
-                self.runAway(mapMatrix, allWalls)
-                pass
             self.inAction = True
 
-    #TODO: document
-    def runAway(self, mapMatrix, allWalls):
-        i = self.i
-        j = self.j
-        onLeftBorder = False
-        onTopBorder = False
-        onRightBorder = False
-        onBottomBorder = False
-        moveFlag = True
-        start = (i,j)
-        end = (0,0)
+    def placeBomb(self):
+        """
+        Places a bomb on the screen
+        :return: null
+        """
+        self.bomb.setCoord(self.rect.centerx, self.rect.centery)
+        self.bomb.resetTime()
+        self.placedBomb = True
 
-        if i == 0:
-            onTopBorder = True
-        if j == 0:
-            onLeftBorder = True
-        if i == 17:
-            onBottomBorder = True
-        if j == 31:
-            onRightBorder = True
-
-        if onLeftBorder and onBottomBorder:
-            end = (16,1)
-        elif onLeftBorder and onTopBorder:
-            end = (1,1)
-        elif onRightBorder and onBottomBorder:
-            end = (16,30)
-        elif onRightBorder and onTopBorder:
-            end = (1,30)
-        elif onLeftBorder:
-            if mapMatrix[i-1][j+1] == 0:
-                end = (i-1,j+1)
-            elif mapMatrix[i+1][j+1] == 0:
-                end = (i+1,j+1)
-            else:
-                moveFlag = False
-        elif onRightBorder:
-            if mapMatrix[i-1][j-1] == 0:
-                end = (i-1,j-1)
-            elif mapMatrix[i+1][j-1] == 0:
-                end = (i+1,j-1)
-            else:
-                moveFlag = False
-        elif onTopBorder:
-            if mapMatrix[i+1][j-1] == 0:
-                end = (i+1,j-1)
-            elif mapMatrix[i+1][j+1] == 0:
-                end = (i+1,j+1)
-            else:
-                moveFlag = False
-        elif onBottomBorder:
-            if mapMatrix[i-1][j+1] == 0:
-                end = (i-1,j+1)
-            elif mapMatrix[i-1][j-1] == 0:
-                end = (i-1,j-1)
-            else:
-                moveFlag = False
-        else:
-            if mapMatrix[i+1][j-1] == 0:
-                end = (i+1,j-1)
-            elif mapMatrix[i+1][j+1] == 0:
-                end = (i+1,j+1)
-            elif mapMatrix[i - 1][j + 1] == 0:
-                end = (i - 1, j + 1)
-            elif mapMatrix[i - 1][j - 1] == 0:
-                end = (i - 1, j - 1)
-            else:
-                moveFlag = False
-
-        if moveFlag:
-            self.path = self.aStar.getPath(mapMatrix, start, end)
-            self.nextNode = self.path[0]
-
-            for rect in allWalls:
-                if rect.i == self.nextNode[0] and rect.j == self.nextNode[1]:
-                    self.nextRect = rect
+    def searchPowerUp(self, powerUps, allWalls, mapMatrix):
+        if len(powerUps) != 0:
+            end = (0,0)
+            powerUp = random.choice(powerUps.sprites())
+            nextRect = None
+            for wall in allWalls:
+                if wall.colliderect(powerUp.rect):
+                    end = (wall.i, wall.j)
+                    nextRect = wall
                     break
+            path = self.aStar.getPath(mapMatrix, (self.i,self.j), end)
+            self.rect.x += 1
+            self.path = path
+            self.nextRect = nextRect
+            self.nextNode = path[0]
+
         else:
             self.inAction = False

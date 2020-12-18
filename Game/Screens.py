@@ -116,6 +116,7 @@ class GameOver:
         """
         self.screen = screen
         self.clicked = False
+        self.text = ""
 
     def draw(self):
         """
@@ -124,7 +125,7 @@ class GameOver:
         """
         self.screen.fill((187, 153, 255))
 
-        title = Text(self.screen, "Game Over", 730, 250, (68, 0, 204), 100)
+        title = Text(self.screen, self.text, 730, 250, (68, 0, 204), 100)
         title.drawText()
 
         button = Button(self.screen, "Play again", 640, 350, 200, 45, (255, 51, 85), (255, 102, 128))

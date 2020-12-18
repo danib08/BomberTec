@@ -6,13 +6,16 @@ class Bomb(pg.sprite.Sprite):
     Class that represents a bomb.
     Extends from the pygame Sprite class.
     """
-    def __init__(self, screenWidth, screenHeight):
+    def __init__(self, screenWidth, screenHeight, bombId, owner):
         """
         Constructor for the bomb.
         :param screenWidth: The screen width that will be the bomb's x coordinate limit
         :param screenHeight: The screen height that will be the bomb's y coordinate limit
+        :param bombId: id to represent the bomb
+        :param bombId: player who the bomb belongs to
         """
         super().__init__()
+        self.id = bombId
         self.screenW = screenWidth
         self.screenH = screenHeight
         self.image = pg.image.load("Resources/Bomb.png").convert_alpha()
@@ -24,6 +27,7 @@ class Bomb(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.time = 3000
 
+        self.owner = owner
         self.rectUp = None
         self.rectDown = None
         self.rectLeft = None
@@ -107,23 +111,25 @@ class Bomb(pg.sprite.Sprite):
             screen.blit(self.fireImage, self.rectLeft)
             screen.blit(self.fireImage, self.rectRight)
 
-    def explode(self, fakeBlocks, characters, mapMatrix, powerUps, player):
+    def explode(self, fakeBlocks, characters, mapMatrix, powerUps, allWalls):
         """
         Destroys the fake walls adjacent to the bomb and hits players
         :param fakeBlocks: list of all fake walls on the map
         :param characters: sprite group of all the characters on the game
         :param mapMatrix: the matrix that represents the game map
         :param powerUps: sprite group of all the power ups on the map
-        ::param player: player that owns the bomb
+        :param allWalls: list of all walls on the game
         :return: null
         """
 
         index = 0
         hitBlocks = False
+        rectList = []
         for rect in fakeBlocks:  # Destroy blocks and update map matrix
-            if not player.cross and (rect.colliderect(self.rectUp) or rect.colliderect(self.rectDown) or
+            if not self.owner.cross and (rect.colliderect(self.rectUp) or rect.colliderect(self.rectDown) or
                               rect.colliderect(self.rectLeft) or rect.colliderect(self.rectRight)):
                 hitBlocks = True
+                rectList.append(rect)
                 mapMatrix[rect.i][rect.j] = 0
 
                 # Power-Up probability
@@ -149,9 +155,9 @@ class Bomb(pg.sprite.Sprite):
         index = 0
         hitPlayer = False
         for character in characters.sprites():  # Checks every character for bomb collision
-            if character.rect.colliderect(self.rectUp) or character.rect.colliderect(self.rectDown) or \
-                    character.rect.colliderect(self.rectLeft) or character.rect.colliderect(self.rectRight) or \
-                    character.rect.colliderect(self.rect):
+            if (character.rect.colliderect(self.rectUp) or character.rect.colliderect(self.rectDown) or
+                character.rect.colliderect(self.rectLeft) or character.rect.colliderect(self.rectRight) or
+                character.rect.colliderect(self.rect)) and self.id != character.id:
                 hitPlayer = True
                 if character.shield:
                     character.shield = False
@@ -163,15 +169,33 @@ class Bomb(pg.sprite.Sprite):
                     character.kill()
             index += 1
 
-        if not player.isPlayer:
+        if not self.owner.isPlayer:
+            if len(rectList) == 0:
+                if self.rectUp.collidelist(allWalls) != -1:
+                    rectList.append(self.rectUp)
+                if self.rectRight.collidelist(allWalls) != -1:
+                    rectList.append(self.rectRight)
+                if self.rectLeft.collidelist(allWalls) != -1:
+                    rectList.append(self.rectLeft)
+                if self.rectDown.collidelist(allWalls) != -1:
+                    rectList.append(self.rectDown)
+
+            if len(rectList) != 0:
+                self.owner.nextRect = random.choice(rectList)
+                for wall in allWalls:
+                    if self.owner.nextRect.center == wall.center and mapMatrix[wall.i][wall.j] == 0:
+                        self.owner.nextNode = (wall.i, wall.j)
+                        break
+                self.owner.path.append(self.owner.nextNode)
+
             if hitBlocks:
-                player.blockRecord.append(1)
+                self.owner.blockRecord.append(1)
             else:
-                player.blockRecord.append(0)
+                self.owner.blockRecord.append(0)
             if hitPlayer:
-                player.enemiesRecord.append(1)
+                self.owner.enemiesRecord.append(1)
             else:
-                player.enemiesRecord.append(0)
+                self.owner.enemiesRecord.append(0)
 
 class PowerUp(pg.sprite.Sprite):
     """
