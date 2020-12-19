@@ -24,7 +24,7 @@ class GameLoop:
         self.statsScreen = StatsScreen(self.screen)
         self.background = pg.image.load("Resources/Grass.jpg").convert()
         self.counter = 0  # counter for the genetic algorithm frames
-        self.nFrames = 700
+        self.nFrames = 10000
         self.mFrames = 300
 
         self.allCharacters = pg.sprite.Group()
@@ -47,6 +47,7 @@ class GameLoop:
         if not self.firstBuild:  # Initializes the map and draws it
             self.gameMap.run(self.screen)
 
+            # Enemies are created
             count = 0
             for rect in self.gameMap.allWalls:
                 for pos in self.enemyPositions:
@@ -62,64 +63,46 @@ class GameLoop:
         self.screen.blit(self.background, (0,0))
         self.gameMap.drawMap(self.screen)
 
+        # Sprites are updated
         keys = pg.key.get_pressed()
-        self.player.update(keys, self.gameMap.walls, self.gameMap.fakeWalls, self.allPowerUps)
-        self.allEnemies.update(self.gameMap.walls, self.gameMap.fakeWalls, self.allPowerUps, self.gameMap.allWalls)
+        self.player.update(keys, self.gameMap.walls, self.gameMap.fakeWalls)
+        self.allEnemies.update(self.gameMap.allWalls)
         self.allCharacters.draw(self.screen)
 
         for character in self.allCharacters.sprites():
             pickedUp = pg.sprite.spritecollide(character, self.allPowerUps, True)  # Picking up power-ups
             for powerUp in pickedUp:
                 powerUp.assignPowerUp(character)
-            if character.placedBomb:
+            if character.placedBomb:    # Managing bombs
                 if character.bomb.time > 500:
                     character.bomb.update()
                     character.bomb.draw(self.screen)
                 if 0 <= character.bomb.time <= 500:
                     character.placedBomb = False
-                    character.bomb.explode(self.gameMap.fakeWalls, self.allCharacters, self.gameMap.backMatrix,
-                                           self.allPowerUps, character)
+                    character.bomb.explode(self.gameMap.fakeWalls, self.allCharacters, self.gameMap.mapMatrix,
+                                           self.allPowerUps, self.gameMap.allWalls)
                     character.bomb.drawFlames(self.screen, character.cross)
                     character.bomb.resetTime()
 
-        self.statsScreen.draw(self.player.lives, self.player.shield)
-        self.allPowerUps.draw(self.screen)
+        self.allPowerUps.draw(self.screen)  # Power ups are drawn
+        self.statsScreen.draw(self.player.lives, self.player.shield) # Stats are updated
 
-        if self.counter == self.mFrames or (self.firstBuild and self.counter == 5):
+        if self.counter % self.mFrames == 0 or (self.firstBuild and self.counter == 5):
             for enemy in self.allEnemies:
-                enemy.doAction(self.gameMap.allWalls, self.gameMap.mapMatrix)
-
-        elif self.counter == self.nFrames:
-            self.genetic.characteres[0].blockRecord = self.allEnemies.sprites()[0].blockRecord
-            self.genetic.characteres[0].enemiesRecord = self.allEnemies.sprites()[0].enemiesRecord
-            self.genetic.characteres[1].blockRecord = self.allEnemies.sprites()[1].blockRecord
-            self.genetic.characteres[1].enemiesRecord = self.allEnemies.sprites()[1].enemiesRecord
-            self.genetic.characteres[2].blockRecord = self.allEnemies.sprites()[2].blockRecord
-            self.genetic.characteres[2].enemiesRecord = self.allEnemies.sprites()[2].enemiesRecord
-            self.genetic.characteres[3].blockRecord = self.allEnemies.sprites()[3].blockRecord
-            self.genetic.characteres[3].enemiesRecord = self.allEnemies.sprites()[3].enemiesRecord
-            self.genetic.characteres[4].blockRecord = self.allEnemies.sprites()[4].blockRecord
-            self.genetic.characteres[4].enemiesRecord = self.allEnemies.sprites()[4].enemiesRecord
-            self.genetic.characteres[5].blockRecord = self.allEnemies.sprites()[5].blockRecord
-            self.genetic.characteres[5].enemiesRecord = self.allEnemies.sprites()[5].enemiesRecord
-            self.genetic.characteres[6].blockRecord = self.allEnemies.sprites()[6].blockRecord
-            self.genetic.characteres[6].enemiesRecord = self.allEnemies.sprites()[6].enemiesRecord
+                enemy.doAction(self.gameMap.allWalls, self.allPowerUps, self.gameMap.mapMatrix, self.allCharacters)
+        elif self.counter == self.nFrames:  # Starts new genetic generation
+            for i in range(0, len(self.allEnemies.sprites())):
+                self.genetic.characteres[i].blockRecord = self.allEnemies.sprites()[i].blockRecord
+                self.genetic.characteres[i].enemiesRecord = self.allEnemies.sprites()[i].enemiesRecord
 
             self.genetic.fitness()
             self.genetic.selection()
             self.genetic.crossOver(4)
             self.genetic.mutation(40)
 
-            self.genetic.characteres[0].DNA = self.allEnemies.sprites()[0].DNA
-            self.genetic.characteres[1].DNA = self.allEnemies.sprites()[1].DNA
-            self.genetic.characteres[2].DNA = self.allEnemies.sprites()[2].DNA
-            self.genetic.characteres[3].DNA = self.allEnemies.sprites()[3].DNA
-            self.genetic.characteres[4].DNA = self.allEnemies.sprites()[4].DNA
-            self.genetic.characteres[5].DNA = self.allEnemies.sprites()[5].DNA
-            self.genetic.characteres[6].DNA = self.allEnemies.sprites()[6].DNA
-
-            for enemy in self.allEnemies.sprites():
-                enemy.setProb()
+            for i in range(0, len(self.allEnemies.sprites())):
+                self.allEnemies.sprites()[i] = self.genetic.characteres[i]
+                self.allEnemies.sprites()[i].setProb()
 
             self.counter = 0
 
@@ -127,8 +110,7 @@ class GameLoop:
 
         if self.player.lives == 0:
             return 1
-        elif self.player.lives > 0 and len(self.allEnemies) == 0:
+        elif self.player.lives > 0 and len(self.allEnemies.sprites()) == 0:
             return 2
-            #TODO: you win (change game over text)
         else:
             return 0
