@@ -244,7 +244,6 @@ class PowerUp(pg.sprite.Sprite):
         :param character: the character who will receive the power-up
         :return: null
         """
-        # TODO: check if enemies power-ups work
         if self.type == "life":
             character.lives += 1
         elif self.type == "shield":

@@ -38,6 +38,7 @@ class Genetic:
         """
         Check that the sum of the probabilities is 100.
         :param listElements: Is the list with the genes.
+        :return: null
         """
         for j in range(len(listElements)):
             aux = sum(listElements)
@@ -50,6 +51,7 @@ class Genetic:
         """
         Generates the first population.
         :return: list with the first population.
+        :return: null
         """
         for i in range(self.nPopulation):
             nCharacter = Character(i+1)
@@ -177,6 +179,7 @@ class Genetic:
         """
         Mutates some population members, this depends of the probability mutation.
         :param probMuta: probability mutation.
+        :return: null
         """
         for character in self.characteres:
             defMut = random.randint(0, 100)

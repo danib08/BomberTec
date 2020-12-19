@@ -89,8 +89,7 @@ class GameLoop:
 
         if self.counter % self.mFrames == 0 or (self.firstBuild and self.counter == 5):
             for enemy in self.allEnemies:
-                enemy.doAction(self.gameMap.allWalls, self.allPowerUps, self.gameMap.mapMatrix) # Enemies do their actions
-
+                enemy.doAction(self.gameMap.allWalls, self.allPowerUps, self.gameMap.mapMatrix, self.allCharacters)
         elif self.counter == self.nFrames:  # Starts new genetic generation
             for i in range(0, len(self.allEnemies.sprites())):
                 self.genetic.characteres[i].blockRecord = self.allEnemies.sprites()[i].blockRecord

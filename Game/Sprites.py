@@ -167,12 +167,13 @@ class Enemy(pg.sprite.Sprite):
         if self.rect.bottom >= self.screenH:
             self.rect.bottom = self.screenH
 
-    def doAction(self, allWalls, powerUps, mapMatrix):
+    def doAction(self, allWalls, powerUps, mapMatrix, allCharacters):
         """
         Triggers an action of the enemy
         :param allWalls: list of all walls on the map
         :param powerUps: list of power up sprites
         :param mapMatrix: matrix that represents the game map
+        :param allCharacters: list of all sprites of players in the game
         :return: null
         """
         if not self.inAction:
@@ -184,13 +185,12 @@ class Enemy(pg.sprite.Sprite):
 
             action = random.choices(self.DNA, weights=(self.DNA[0], self.DNA[1], self.DNA[2], self.DNA[3]), k=1)
             if action[0] == self.hideProb:
-                #TODO: A*
                 pass
             elif action[0] == self.powerProb:
                 self.searchPowerUp(powerUps, allWalls, mapMatrix)
                 pass
             elif action[0] == self.enemyProb:
-                #TODO: A*
+                self.searchEnemy(allCharacters, allWalls, mapMatrix)
                 pass
             elif action[0] == self.bombProb:
                 self.placeBomb()
@@ -216,10 +216,32 @@ class Enemy(pg.sprite.Sprite):
                     nextRect = wall
                     break
             path = self.aStar.getPath(mapMatrix, (self.i,self.j), end)
-            self.rect.x += 1
-            self.path = path
-            self.nextRect = nextRect
-            self.nextNode = path[0]
+            if path is not None:
+                self.path = path
+                self.nextRect = nextRect
+                self.nextNode = path[0]
+            else:
+                self.inAction = True
 
         else:
             self.inAction = False
+
+    def searchEnemy(self, allCharacters, allWalls, mapMatrix):
+        pass
+        # end = (0, 0)
+        # enemy = random.choice(allCharacters.sprites())
+        # while enemy == self:
+        #     enemy = random.choice(allCharacters.sprites())
+        # nextRect = None
+        # for wall in allWalls:
+        #     if wall.colliderect(enemy.rect):
+        #         end = (wall.i, wall.j)
+        #         nextRect = wall
+        #         break
+        # path = self.aStar.getPath(mapMatrix, (self.i, self.j), end)
+        # if path is not None:
+        #     self.path = path
+        #     self.nextRect = nextRect
+        #     self.nextNode = path[0]
+        # else:
+        #     self.inAction = True
