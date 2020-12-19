@@ -51,7 +51,6 @@ class CreateMap:
         """
         i, j = current[0], current[1]
         matrix_i, matrix_j = len(matrix) - 1, len(matrix[0]) - 1
-        # print(visited)
         result = []
         if not j + 1 > matrix_j:
             temp = [i, j + 1]
