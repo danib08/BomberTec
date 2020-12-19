@@ -4,29 +4,53 @@ import copy
 
 class Genetic:
 
+    """
+    This class represents the Genetic Algorithm
+    """
+
     def __init__(self, characteres, nPopulation):
+        """
+        Constructor of the Genetic class
+        :param characteres: character list
+        :param nPopulation: population size
+        """
         self.characteres = characteres #lista de individuos
         self.nPopulation = nPopulation #Cantidad de idividuos que quiero
 
-    #Obtiene la lista de individuos
+
     def getCharacteres(self):
+        """
+        Is a getter that returns the character list.
+        :return: list with character type objects.
+        """
         return self.characteres
 
-    #Setea la lista de individuos
+
     def setCharacteres(self, selectedPopu):
+        """
+        Sets the population with the new character list after crossover.
+        :param selectedPopu: Is the new character list with the new members of the population.
+        """
         self.characteres = selectedPopu
 
 
-    #Verifica que la suma de las probabilidades sea 100
     def sumList(self, listElements):
+        """
+        Check that the sum of the probabilities is 100.
+        :param listElements: Is the list with the genes.
+        """
         for j in range(len(listElements)):
             aux = sum(listElements)
             if aux != 100:
                 n = 100 - aux
                 listElements[random.randint(0, 3)] += n
 
-    #Genera la poblacion inicial
+
     def generateFP(self):
+        """
+        Generates the first population.
+        :return: list with the first population.
+        """
         for i in range(self.nPopulation):
             nCharacter = Character(i+1)
             prob = 100
@@ -39,11 +63,13 @@ class Genetic:
             random.shuffle(nCharacter.DNA)
             self.characteres.append(nCharacter)
 
-    #Función Fitness
 
-    #Calcula primer parametro para el fitness
-    #Bombas mas cercanas a los idividuos
     def f1(self, bombsR):
+        """
+        First element of the fitness function.
+        :param bombsR: Is the list with bombs Record.
+        :return: result of bombs efficiency.
+        """
         value = 0
         if len(bombsR) == 0:
             return value
@@ -53,10 +79,13 @@ class Genetic:
             f = 1/(value/sum(bombsR))
             return f
 
-    #Calcula segundo y tercer parametro para el fitness
-    #Bombas detonodas en enemigos
-    #Bombas detonadas en bloques
     def f2(self, enemiesR):
+        """
+        Second and third elements of the fitness function.
+        :param enemiesR: Is the list with Enemies Record.
+        :param blocksR: Is the list with Blocks Record.
+        :return: result of bombs efficiency with the detonation of the enemies and blocks.
+        """
         value = 0
         if len(enemiesR) == 0:
             return value
@@ -66,27 +95,34 @@ class Genetic:
             f = value/len(enemiesR)
             return f
 
-    #Suma de todos los parametros para el fitness
     def fitness(self):
+        """
+        Fitness function, evaluate each member of the population and sets the fitness value.
+        :return: Fitness Value of eache member.
+        """
         for i in range (len(self.characteres)):
             fit = (self.f1(self.characteres[i].bombsRecord)
                   + self.f2(self.characteres[i].enemiesRecord)
                   + self.f2(self.characteres[i].blockRecord))*10
             self.characteres[i].setFitness(fit)
 
-    #Seleccion
-
-    #Suma de todos los fitness
     def totalFit(self, listPopu):
+        """
+        Sums each fitness value member.
+        :param listPopu: population list.
+        :return: A total sum of the fitness value of each member.
+        """
         globalFitness = 0
         i = 0
         for i in range(len(listPopu)):
             globalFitness += listPopu[i].fitness
         return round(globalFitness)
 
-    #Selección de individuos para el crossover
-    #Se utiliza el metodo de la ruleta
     def selection(self):
+        """
+        Select the best population members, with roulette methood.
+        :return: Parents of the new population members.
+        """
         popu = copy.deepcopy(self.characteres)
         selectedPopu = []
         i = 0
@@ -105,9 +141,13 @@ class Genetic:
         self.setCharacteres(selectedPopu)
         print(len(selectedPopu))
 
-    #Crossover
-    #Metodo de un solo puntu
+
     def crossOver(self, reproduc):
+        """
+        Create the new population members with the selected parents.
+        :param reproduc: number of the new members.
+        :return: A new population list with the new members.
+        """
         parents = copy.deepcopy(self.characteres)
         random.shuffle(parents)
         for i in range(reproduc):
@@ -132,8 +172,12 @@ class Genetic:
                 self.characteres.append(son1)
                 self.characteres.append(son2)
 
-    #Mutation
+
     def mutation(self, probMuta):
+        """
+        Mutates some population members, this depends of the probability mutation.
+        :param probMuta: probability mutation.
+        """
         for character in self.characteres:
             defMut = random.randint(0, 100)
             if defMut <= probMuta:
